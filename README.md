@@ -27,7 +27,7 @@
 
 3. HTML解析的时候遇到了JavaScript标签，会停止解析HTML，而去加载和执行JavaScript代码
 
-![avatar](/image//01/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E8%BF%87%E7%A8%8B.png)
+![avatar](https://github.com/hidari123/deep-javascript/blob/master/image/01/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E8%BF%87%E7%A8%8B.png)
 
 ### JavaScript引擎
 
@@ -47,7 +47,7 @@
 
 V8是用C ++编写的Google开源高性能JavaScript和WebAssembly引擎，它用于Chrome和Node.js等，可以独立运行，也可以嵌入到任何C++应用程序中。
 
-![avatar](/image/01/v8%E5%BC%95%E6%93%8E%E5%8E%9F%E7%90%86.png)
+![avatar](https://github.com/hidari123/deep-javascript/blob/master/image/01/v8%E5%BC%95%E6%93%8E%E5%8E%9F%E7%90%86.png)
 
 1. `Parse`模块会将JavaScript代码转换成`AST（抽象语法树）`，这是因为解释器并不直接认识JavaScript代码
     - 如果函数没有被调用，那么是不会被转换成AST的
@@ -82,7 +82,7 @@ js引擎会在执行代码之前，会在堆内存中创建一个全局对象：
 - 里面会包含Date、Array、String、Number、setTimeout、setInterval等等；
 - 其中还有一个window属性指向自己
 
-![avatar](/image/01/%E5%A0%86%E5%86%85%E5%AD%98.png)
+![avatar](https://github.com/hidari123/deep-javascript/blob/master/image/01/%E5%A0%86%E5%86%85%E5%AD%98.png)
 
 2. 执行上下文栈（调用栈）
 
@@ -94,5 +94,5 @@ js引擎内部有一个执行上下文栈（Execution Context Stack，简称ECS�
     - 第一部分：在代码执行前，在parser转成AST的过程中，会将全局定义的变量、函数等加入到GlobalObject中，但是并不会赋值；
         - 这个过程也称之为变量的作用域提升（hoisting）
     - 第二部分：在代码执行中，对变量赋值，或者执行其他的函数
-![avatar](/image/01/GEC%E8%A2%AB%E6%94%BE%E5%85%A5%E5%88%B0ECS%E4%B8%AD.png)
-![avatar](/image/01/GEC%E5%BC%80%E5%A7%8B%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81.png)
+![avatar](https://github.com/hidari123/deep-javascript/blob/master/image/01/GEC%E8%A2%AB%E6%94%BE%E5%85%A5%E5%88%B0ECS%E4%B8%AD.png)
+![avatar](https://github.com/hidari123/deep-javascript/blob/master/image/01/GEC%E5%BC%80%E5%A7%8B%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81.png)
