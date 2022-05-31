@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-05-30 18:21:55
+ * @LastEditTime: 2022-05-31 09:48:52
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -81,6 +81,12 @@
       - [JavaScript原型链](#javascript%E5%8E%9F%E5%9E%8B%E9%93%BE)
       - [通过原型链实现继承](#%E9%80%9A%E8%BF%87%E5%8E%9F%E5%9E%8B%E9%93%BE%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
       - [借用构造函数继承](#%E5%80%9F%E7%94%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%BB%A7%E6%89%BF)
+      - [原型式继承函数](#%E5%8E%9F%E5%9E%8B%E5%BC%8F%E7%BB%A7%E6%89%BF%E5%87%BD%E6%95%B0)
+      - [寄生式继承函数](#%E5%AF%84%E7%94%9F%E5%BC%8F%E7%BB%A7%E6%89%BF%E5%87%BD%E6%95%B0)
+      - [寄生组合式继承](#%E5%AF%84%E7%94%9F%E7%BB%84%E5%90%88%E5%BC%8F%E7%BB%A7%E6%89%BF)
+      - [对象的方法补充](#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95%E8%A1%A5%E5%85%85)
+      - [原型继承关系](#%E5%8E%9F%E5%9E%8B%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB)
+    - [类](#%E7%B1%BB)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1589,3 +1595,204 @@ var stu3 = new Student("lilei", 112)
         - 另一次在子类构造函数内部(也就是每次创建子类实例的时候)
     - 所有的子类实例事实上会拥有两份父类的属性
         - 一份在当前的实例自己里面(也就是person本身的)，另一份在子类对应的原型对象中(也就是person.__proto__里面)
+
+#### 原型式继承函数
+
+> JavaScript想实现继承的目的：重复利用另外一个对象的属性和方法
+
+```js
+var obj = {
+  name: "why",
+  age: 18
+}
+
+var info = Object.create(obj)
+
+// 原型式继承函数
+function createObject1(o) {
+  var newObj = {}
+  Object.setPrototypeOf(newObj, o)
+  return newObj
+}
+
+function createObject2(o) {
+  function Fn() {}
+  Fn.prototype = o
+  var newObj = new Fn()
+  return newObj
+}
+
+// var info = createObject2(obj)
+var info = Object.create(obj)
+console.log(info)
+console.log(info.__proto__)
+```
+
+#### 寄生式继承函数
+
+> 寄生式继承的思路是结合原型类继承和工厂模式的一种方式
+> 即创建一个封装继承过程的函数, 该函数在内部以某种方式来增强对象，最后再将这个对象返回
+
+```js
+var personObj = {
+  running: function() {
+    console.log("running")
+  }
+}
+
+function createStudent(name) {
+  var stu = Object.create(personObj)
+  stu.name = name
+  stu.studying = function() {
+    console.log("studying~")
+  }
+  return stu
+}
+
+var stuObj = createStudent("why")
+var stuObj1 = createStudent("kobe")
+var stuObj2 = createStudent("james")
+```
+
+#### 寄生组合式继承
+
+理想的组合继承
+- 组合继承是比较理想的继承方式, 但是存在两个问题:
+    - 问题一: 构造函数会被调用两次: 一次在创建子类型原型对象的时候, 一次在创建子类型实例的时候.
+    - 问题二: 父类型中的属性会有两份: 一份在原型对象中, 一份在子类型实例中
+
+寄生式继承将这两个问题给解决掉
+- 当我们在子类型的构造函数中调用父类型`.call(this, 参数)`这个函数的时候, 就会将父类型中
+的属性和方法复制一份到了子类型中. 所以父类型本身里面的内容, 我们不再需要
+- 这个时候, 我们还需要获取到一份父类型的原型对象中的属性和方法.
+- 能不能直接让子类型的原型对象 = 父类型的原型对象呢?
+- 不要这么做, 因为这么做意味着以后修改了子类型原型对象的某个引用类型的时候, 父类型原生对象的引用类型也会被修改.
+- 我们使用前面的寄生式思想就可以了
+
+```js
+// 定义 createObject 函数 返回 object 的实例
+function createObject(o) {
+  function Fn() {}
+  Fn.prototype = o
+  return new Fn()
+}
+
+
+/**
+ * 继承式核心函数
+ * @param SubType 子函数
+ * @param SuperType 父函数
+ */
+function inheritPrototype(SubType, SuperType) {
+  SubType.prototype = Object.create(SuperType.prototype)
+//   SubType.prototype = createObject(SuperType.prototype)
+  Object.defineProperty(SubType.prototype, "constructor", {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: SubType
+  })
+}
+
+function Person(name, age, friends) {
+  this.name = name
+  this.age = age
+  this.friends = friends
+}
+
+inheritPrototype(Student, Person)
+```
+
+#### 对象的方法补充
+
+1. `hasOwnProperty`：对象是否有某一个属于自己的属性（不是在原型上的属性）
+2. `in`/`for in` 操作符：判断某个属性是否在某个对象或者对象的原型上
+3. `instanceof`：用于检测构造函数的`prototype`，是否出现在某个实例对象的原型链上
+4. `isPrototypeOf`：用于检测某个对象，是否出现在某个实例对象的原型链上
+
+
+#### 原型继承关系
+
+> `function Function(){}` 的 `prototype` 和 `__proto__` 都是 `Function`
+> __proto__ => 因为函数也是对象 指向对象
+> `prototype` => 因为是一个函数 所以有 `prototype` 属性 指向 `Funtion`
+
+![原型继承关系](/image/05/%E5%8E%9F%E5%9E%8B%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png)
+
+### 类
+
+- 类的构造函数
+- 当我们通过`new`关键字操作类的时候，会调用这个`constructor`函数，并且执行如下操作：
+1. 在内存中创建一个新的对象（空对象）
+2. 这个对象内部的`[[prototype]]`属性会被赋值为该类的`prototype`属性
+3. 构造函数内部的`this`，会指向创建出来的新对象
+4. 执行构造函数的内部代码（函数体代码）
+5. 如果构造函数没有返回非空对象，则返回创建出来的新对象
+
+- 类的实例方法
+    - 对于实例的方法，我们是希望放到原型上的，这样可以被多个实例来共享
+    - 类中定义的方法，直接放在原型上
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name
+    this.age = age
+    this._address = "广州市"
+  }
+
+  // 普通的实例方法
+  // 创建出来的对象进行访问
+  // var p = new Person()
+  // p.eating()
+  eating() {
+    console.log(this.name + " eating~")
+  }
+
+  running() {
+    console.log(this.name + " running~")
+  }
+}
+```
+
+- 类的访问器方法
+    - 讲对象的属性描述符时有讲过对象可以添加`setter`和`getter`函数的，那么类也是可以的
+```js
+class Person {
+  // 类的访问器方法
+  get address() {
+    console.log("拦截访问操作")
+    return this._address
+  }
+
+  set address(newAddress) {
+    console.log("拦截设置操作")
+    this._address = newAddress
+  }
+}
+```
+
+- 类的静态方法
+    - 静态方法通常用于定义直接使用类来执行的方法，不需要有类的实例，使用static关键字来定义
+```js
+class Person {
+  // 类的静态方法(类方法)
+  // Person.createPerson()
+  static randomPerson() {
+    var nameIndex = Math.floor(Math.random() * names.length)
+    var name = names[nameIndex]
+    var age = Math.floor(Math.random() * 100)
+    return new Person(name, age)
+  }
+}
+```
+
+- super关键字：
+    - 注意：在子（派生）类的构造函数中使用this或者返回默认对象之前，必须先通过super调用父类的构造函数！
+    - super的使用位置有三个：子类的构造函数、实例方法、静态方法
+```js
+// 调用 父对象/父类 的构造函数
+super([arguments])
+
+// 调用 父对象/父类 的方法
+super.functionOnparent([arguments])
+```
