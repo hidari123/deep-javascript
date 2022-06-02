@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-05-31 09:48:52
+ * @LastEditTime: 2022-06-02 09:29:59
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -1796,3 +1796,491 @@ super([arguments])
 // 调用 父对象/父类 的方法
 super.functionOnparent([arguments])
 ```
+
+#### 继承内置类
+
+```js
+class HYArray extends Array {
+  firstItem() {
+    return this[0]
+  }
+
+  lastItem() {
+    return this[this.length-1]
+  }
+}
+
+var arr = new HYArray(1, 2, 3)
+console.log(arr.firstItem())
+console.log(arr.lastItem())
+```
+
+#### 类的混入 mixin
+- JavaScript的类只支持单继承：也就是只能有一个父类
+    - 在开发中我们需要在一个类中添加更多相似的功能时，可以使用混入（mixin）
+
+```js
+class Person {
+
+}
+
+function mixinRunner(BaseClass) {
+  class NewClass extends BaseClass {
+    running() {
+      console.log("running~")
+    }
+  }
+  return NewClass
+}
+
+function mixinEater(BaseClass) {
+  return class extends BaseClass {
+    eating() {
+      console.log("eating~")
+    }
+  }
+}
+
+// 在JS中类只能有一个父类: 单继承
+class Student extends Person {
+
+}
+
+var NewStudent = mixinEater(mixinRunner(Student))
+var ns = new NewStudent()
+ns.running()
+ns.eating()
+```
+
+#### 阅读源码
+
+1. ES6转ES5的代码
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name
+    this.age = age
+  }
+
+  eating() {
+    console.log(this.name + " eating~")
+  }
+}
+```
+```js
+// babel转换
+"use strict";
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+// /*#__PURE__*/ 纯函数
+// webpack 压缩 tree-shaking
+// 这个函数没副作用
+var Person = /*#__PURE__*/ (function () {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  _createClass(Person, [
+    {
+      key: "eating",
+      value: function eating() {
+        console.log(this.name + " eating~");
+      }
+    }
+  ]);
+
+  return Person;
+})();
+```
+
+2. ES6转ES5的继承
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name
+    this.age = age
+  }
+
+  running() {
+    console.log(this.name + " running~")
+  }
+
+  static staticMethod() {
+
+  }
+}
+
+class Student extends Person {
+  constructor(name, age, sno) {
+    super(name, age)
+    this.sno = sno
+  }
+
+  studying() {
+    console.log(this.name + " studying~")
+  }
+}
+```
+```js
+// babel转换后的代码
+"use strict";
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj &&
+        typeof Symbol === "function" &&
+        obj.constructor === Symbol &&
+        obj !== Symbol.prototype
+        ? "symbol"
+        : typeof obj;
+    };
+  }
+  return _typeof(obj);
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: { value: subClass, writable: true, configurable: true }
+  });
+  // 目的静态方法的继承
+  // Student.__proto__ = Person
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+// o: Student
+// p: Person
+// 静态方法的继承
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf =
+    Object.setPrototypeOf ||
+    function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+  return _setPrototypeOf(o, p);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+      result;
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  } else if (call !== void 0) {
+    throw new TypeError(
+      "Derived constructors may only return object or undefined"
+    );
+  }
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError(
+      "this hasn't been initialised - super() hasn't been called"
+    );
+  }
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+  try {
+    Boolean.prototype.valueOf.call(
+      Reflect.construct(Boolean, [], function () {})
+    );
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf
+    ? Object.getPrototypeOf
+    : function _getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+      };
+  return _getPrototypeOf(o);
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+var Person = /*#__PURE__*/ (function () {
+  function Person(name, age) {
+    _classCallCheck(this, Person);
+
+    this.name = name;
+    this.age = age;
+  }
+
+  _createClass(Person, [
+    {
+      key: "running",
+      value: function running() {
+        console.log(this.name + " running~");
+      }
+    }
+  ]);
+
+  return Person;
+})();
+
+var Student = /*#__PURE__*/ (function (_Person) {
+  // 实现之前的寄生式继承的方法(静态方法的继承)
+  _inherits(Student, _Person);
+
+  var _super = _createSuper(Student);
+
+  function Student(name, age, sno) {
+    var _this;
+
+    _classCallCheck(this, Student);
+
+    // Person不能被当成一个函数去调用
+    // Person.call(this, name, age)
+
+    debugger;
+    // 创建出来的对象 {name: , age: }
+    _this = _super.call(this, name, age);
+    _this.sno = sno;
+    // {name: , age:, sno: }
+    return _this;
+  }
+
+  _createClass(Student, [
+    {
+      key: "studying",
+      value: function studying() {
+        console.log(this.name + " studying~");
+      }
+    }
+  ]);
+
+  return Student;
+})(Person);
+
+
+var stu = new Student()
+
+// Super: Person
+// arguments: ["why", 18]
+// NewTarget: Student
+// 会通过Super创建出来一个实例, 但是这个实例的原型constructor指向的是NewTarget
+// 会通过Person创建出来一个实例, 但是这个实例的原型constructor指向的Person
+Reflect.construct(Super, arguments, NewTarget);
+```
+
+### JavaScript中的多态
+
+- 面向对象的三大特性：封装、继承、多态
+
+- 维基百科对多态的定义：多态（英语：polymorphism）指为不同数据类型的实体提供统一的接口，或使用一个单一的符号来表示多个不同的类型。
+- 总结：不同的数据类型进行同一个操作，表现出不同的行为，就是多态的体现。
+- 那么从上面的定义来看，JavaScript是一定存在多态的
+
+```js
+// 多态: 当对不同的数据类型执行同一个操作时, 如果表现出来的行为(形态)不一样, 那么就是多态的体现.
+function calcArea(foo) {
+  console.log(foo.getArea())
+}
+
+var obj1 = {
+  name: "why",
+  getArea: function() {
+    return 1000
+  }
+}
+
+class Person {
+  getArea() {
+    return 100
+  }
+}
+
+var p = new Person()
+
+calcArea(obj1)
+calcArea(p)
+
+
+// 也是多态的体现
+function sum(m, n) {
+  return m + n
+}
+
+sum(20, 30)
+sum("abc", "cba")
+```
+
+## ES6-ES12新增
+
+### ES6
+
+#### 字面量的增强
+
+字面量的增强主要包括下面几部分：
+- 属性的简写：Property Shorthand
+- 方法的简写：Method Shorthand
+- 计算属性名：Computed Property Names
+
+```js
+var name = "why"
+var age = 18
+
+var obj = {
+  // 1.property shorthand(属性的简写)
+  name,
+  age,
+
+  // 2.method shorthand(方法的简写)
+  foo: function() {
+    console.log(this)
+  },
+  bar() {
+    console.log(this)
+  },
+  baz: () => {
+    console.log(this)
+  },
+
+  // 3.computed property name(计算属性名)
+  [name + 123]: 'hehehehe'
+}
+```
+
+#### 解构Destructuring
+
+ES6中新增了一个从数组或对象中方便获取数据的方法，称之为解构Destructuring。
+- 我们可以划分为：数组的解构和对象的解构。
+- 数组的解构：
+    - 基本解构过程
+    - 顺序解构
+    - 解构出数组
+    - 默认值
+```js
+var names = ["abc", "cba", "nba"]
+// var item1 = names[0]
+// var item2 = names[1]
+// var item3 = names[2]
+
+// 对数组的解构: []
+var [item1, item2, item3] = names
+console.log(item1, item2, item3)
+
+// 解构后面的元素
+var [, , itemz] = names
+console.log(itemz)
+
+// 解构出一个元素,后面的元素放到一个新数组中
+var [itemx, ...newNames] = names
+console.log(itemx, newNames)
+
+// 解构的默认值
+var [itema, itemb, itemc, itemd = "aaa"] = names
+console.log(itemd)
+```
+- 对象的解构：
+    - 基本解构过程
+    - 任意顺序
+    - 重命名
+    - 默认值
+```js
+var obj = {
+  name: "why",
+  age: 18,
+  height: 1.88
+}
+
+// 对象的解构: {}
+var { name, age, height } = obj
+console.log(name, age, height)
+
+var { age } = obj
+console.log(age)
+
+var { name: newName } = obj
+console.log(newName)
+
+var { address: newAddress = "广州市" } = obj
+console.log(newAddress)
+
+
+function foo(info) {
+  console.log(info.name, info.age)
+}
+
+foo(obj)
+
+function bar({name, age}) {
+  console.log(name, age)
+}
+
+bar(obj)
+```
+
