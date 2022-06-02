@@ -87,6 +87,14 @@
       - [对象的方法补充](#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95%E8%A1%A5%E5%85%85)
       - [原型继承关系](#%E5%8E%9F%E5%9E%8B%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB)
     - [类](#%E7%B1%BB)
+      - [继承内置类](#%E7%BB%A7%E6%89%BF%E5%86%85%E7%BD%AE%E7%B1%BB)
+      - [类的混入 mixin](#%E7%B1%BB%E7%9A%84%E6%B7%B7%E5%85%A5-mixin)
+      - [阅读源码](#%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81)
+    - [JavaScript中的多态](#javascript%E4%B8%AD%E7%9A%84%E5%A4%9A%E6%80%81)
+  - [ES6-ES12新增](#es6-es12%E6%96%B0%E5%A2%9E)
+    - [ES6](#es6)
+      - [字面量的增强](#%E5%AD%97%E9%9D%A2%E9%87%8F%E7%9A%84%E5%A2%9E%E5%BC%BA)
+      - [解构Destructuring](#%E8%A7%A3%E6%9E%84destructuring)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
