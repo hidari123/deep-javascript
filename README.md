@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-02 09:29:59
+ * @LastEditTime: 2022-06-06 14:51:14
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -52,7 +52,7 @@
       - [apply](#apply)
       - [bind](#bind)
       - [arguments](#arguments)
-      - [箭头函数不绑定arguments](#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E4%B8%8D%E7%BB%91%E5%AE%9Aarguments)
+      - [箭头函数不绑定arguments，没有显式原型](#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E4%B8%8D%E7%BB%91%E5%AE%9Aarguments%E6%B2%A1%E6%9C%89%E6%98%BE%E5%BC%8F%E5%8E%9F%E5%9E%8B)
     - [JavaScript纯函数](#javascript%E7%BA%AF%E5%87%BD%E6%95%B0)
       - [纯函数的案例](#%E7%BA%AF%E5%87%BD%E6%95%B0%E7%9A%84%E6%A1%88%E4%BE%8B)
       - [纯函数的优势](#%E7%BA%AF%E5%87%BD%E6%95%B0%E7%9A%84%E4%BC%98%E5%8A%BF)
@@ -94,7 +94,91 @@
   - [ES6-ES12新增](#es6-es12%E6%96%B0%E5%A2%9E)
     - [ES6](#es6)
       - [字面量的增强](#%E5%AD%97%E9%9D%A2%E9%87%8F%E7%9A%84%E5%A2%9E%E5%BC%BA)
-      - [解构Destructuring](#%E8%A7%A3%E6%9E%84destructuring)
+      - [解构 Destructuring](#%E8%A7%A3%E6%9E%84-destructuring)
+      - [let/const](#letconst)
+      - [函数默认值](#%E5%87%BD%E6%95%B0%E9%BB%98%E8%AE%A4%E5%80%BC)
+      - [函数的剩余参数](#%E5%87%BD%E6%95%B0%E7%9A%84%E5%89%A9%E4%BD%99%E5%8F%82%E6%95%B0)
+      - [展开语法](#%E5%B1%95%E5%BC%80%E8%AF%AD%E6%B3%95)
+      - [数值的表示](#%E6%95%B0%E5%80%BC%E7%9A%84%E8%A1%A8%E7%A4%BA)
+      - [Symbol](#symbol)
+      - [Set的常见方法](#set%E7%9A%84%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95)
+      - [WeakSet使用](#weakset%E4%BD%BF%E7%94%A8)
+      - [Map的基本使用](#map%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+      - [WeakMap的使用](#weakmap%E7%9A%84%E4%BD%BF%E7%94%A8)
+    - [ES7](#es7)
+      - [Array Includes](#array-includes)
+      - [指数(乘方) exponentiation运算符](#%E6%8C%87%E6%95%B0%E4%B9%98%E6%96%B9-exponentiation%E8%BF%90%E7%AE%97%E7%AC%A6)
+    - [ES8](#es8)
+      - [Object values](#object-values)
+      - [Object entries](#object-entries)
+      - [String Padding](#string-padding)
+      - [Trailing Commas](#trailing-commas)
+      - [Object Descriptors](#object-descriptors)
+    - [ES10](#es10)
+      - [flat flatMap](#flat-flatmap)
+      - [Object fromEntries](#object-fromentries)
+      - [trimStart trimEnd](#trimstart-trimend)
+    - [ES11](#es11)
+      - [BigInt](#bigint)
+      - [Nullish Coalescing Operator](#nullish-coalescing-operator)
+      - [Optional Chaining](#optional-chaining)
+      - [Global This](#global-this)
+      - [for..in标准化](#forin%E6%A0%87%E5%87%86%E5%8C%96)
+    - [ES12](#es12)
+      - [FinalizationRegistry](#finalizationregistry)
+      - [WeakRefs](#weakrefs)
+      - [logical assignment operators](#logical-assignment-operators)
+  - [Proxy-Reflect vue2-vue3响应式原理](#proxy-reflect-vue2-vue3%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86)
+    - [Proxy](#proxy)
+      - [Proxy基本使用](#proxy%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+      - [Proxy的set和get捕获器](#proxy%E7%9A%84set%E5%92%8Cget%E6%8D%95%E8%8E%B7%E5%99%A8)
+      - [Proxy所有捕获器](#proxy%E6%89%80%E6%9C%89%E6%8D%95%E8%8E%B7%E5%99%A8)
+      - [Proxy的construct和apply](#proxy%E7%9A%84construct%E5%92%8Capply)
+    - [Reflect](#reflect)
+      - [Receiver的作用](#receiver%E7%9A%84%E4%BD%9C%E7%94%A8)
+      - [Reflect的construct](#reflect%E7%9A%84construct)
+    - [响应式](#%E5%93%8D%E5%BA%94%E5%BC%8F)
+      - [响应式函数的实现](#%E5%93%8D%E5%BA%94%E5%BC%8F%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0)
+      - [响应式依赖的收集](#%E5%93%8D%E5%BA%94%E5%BC%8F%E4%BE%9D%E8%B5%96%E7%9A%84%E6%94%B6%E9%9B%86)
+      - [监听对象的变化](#%E7%9B%91%E5%90%AC%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8F%98%E5%8C%96)
+      - [对象的依赖管理](#%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86)
+      - [正确的依赖收集](#%E6%AD%A3%E7%A1%AE%E7%9A%84%E4%BE%9D%E8%B5%96%E6%94%B6%E9%9B%86)
+      - [对Depend重构](#%E5%AF%B9depend%E9%87%8D%E6%9E%84)
+      - [创建响应式对象](#%E5%88%9B%E5%BB%BA%E5%93%8D%E5%BA%94%E5%BC%8F%E5%AF%B9%E8%B1%A1)
+      - [Vue2响应式原理](#vue2%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86)
+  - [Promise](#promise)
+    - [Promise使用](#promise%E4%BD%BF%E7%94%A8)
+      - [Executor](#executor)
+      - [resolve不同值的区别](#resolve%E4%B8%8D%E5%90%8C%E5%80%BC%E7%9A%84%E5%8C%BA%E5%88%AB)
+      - [then方法](#then%E6%96%B9%E6%B3%95)
+      - [catch方法](#catch%E6%96%B9%E6%B3%95)
+      - [finally方法](#finally%E6%96%B9%E6%B3%95)
+      - [Promise的类方法](#promise%E7%9A%84%E7%B1%BB%E6%96%B9%E6%B3%95)
+    - [Promise 实现](#promise-%E5%AE%9E%E7%8E%B0)
+  - [Iterator-Generator](#iterator-generator)
+    - [迭代器](#%E8%BF%AD%E4%BB%A3%E5%99%A8)
+    - [可迭代对象](#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1)
+      - [原生迭代器对象](#%E5%8E%9F%E7%94%9F%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%AF%B9%E8%B1%A1)
+      - [可迭代对象的应用](#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BA%94%E7%94%A8)
+      - [自定义类的迭代](#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E7%9A%84%E8%BF%AD%E4%BB%A3)
+    - [生成器](#%E7%94%9F%E6%88%90%E5%99%A8)
+      - [生成器传递参数 – next函数](#%E7%94%9F%E6%88%90%E5%99%A8%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0--next%E5%87%BD%E6%95%B0)
+      - [生成器提前结束 – return 函数](#%E7%94%9F%E6%88%90%E5%99%A8%E6%8F%90%E5%89%8D%E7%BB%93%E6%9D%9F--return-%E5%87%BD%E6%95%B0)
+      - [生成器抛出异常 – throw 函数](#%E7%94%9F%E6%88%90%E5%99%A8%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8--throw-%E5%87%BD%E6%95%B0)
+      - [生成器替代迭代器](#%E7%94%9F%E6%88%90%E5%99%A8%E6%9B%BF%E4%BB%A3%E8%BF%AD%E4%BB%A3%E5%99%A8)
+      - [对生成器的操作](#%E5%AF%B9%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%93%8D%E4%BD%9C)
+      - [异步处理方案](#%E5%BC%82%E6%AD%A5%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88)
+  - [await-async-事件循环](#await-async-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF)
+    - [异步函数 async function](#%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-async-function)
+    - [进程和线程](#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B)
+      - [操作系统的工作方式](#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F)
+      - [浏览器中的JavaScript线程](#%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84javascript%E7%BA%BF%E7%A8%8B)
+        - [浏览器的事件循环](#%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF)
+        - [宏任务和微任务](#%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%92%8C%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+    - [Node的事件循环](#node%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF)
+      - [Node事件循环的阶段](#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E7%9A%84%E9%98%B6%E6%AE%B5)
+      - [Node的宏任务和微任务](#node%E7%9A%84%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%92%8C%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+      - [Node事件循环的顺序](#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E7%9A%84%E9%A1%BA%E5%BA%8F)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -909,9 +993,11 @@ var names = ["aaa", "bbb", "ccc", "ddd"]
 names.slice(1, 3)
 ```
 
-#### 箭头函数不绑定arguments
+#### 箭头函数不绑定arguments，没有显式原型
 
 > 箭头函数是不绑定`arguments`的，所以我们在箭头函数中使用`arguments`会去上层作用域查找
+
+> 箭头函数是没有显式原型的，所以不能作为构造函数，使用`new`来创建对象
 
 ```js
 // 1.案例一:
@@ -2222,7 +2308,7 @@ var obj = {
 }
 ```
 
-#### 解构Destructuring
+#### 解构 Destructuring
 
 ES6中新增了一个从数组或对象中方便获取数据的方法，称之为解构Destructuring。
 - 我们可以划分为：数组的解构和对象的解构。
@@ -2292,3 +2378,2453 @@ function bar({name, age}) {
 bar(obj)
 ```
 
+#### let/const
+
+- `const`关键字：
+    - `const`关键字是`constant`的单词的缩写，表示常量、衡量的意思；
+    - 它表示保存的数据一旦被赋值，就不能被修改；
+    - 但是如果赋值的是引用类型，那么可以通过引用找到对应的对象，修改对象的内容；
+
+- `let/const`作用域提升
+
+    ```js
+    console.log(foo) // ReferenceError: Cannot access 'foo' before initialization
+
+    let foo = "foo"
+    ```
+    - 这些变量会被创建在包含他们的词法环境被实例化时，但是是不可以访问它们的，直到词法绑定被求值
+    - ，在执行上下文的词法环境创建出来的时候，变量事实上已经被创建了，只是这个变量是不能被访问的
+    - `let`、`const`没有进行作用域提升，但是会在解析阶段被创建出来
+
+- `Window`对象添加属性
+    - 在全局通过var来声明一个变量，事实上会在`window`上添加一个属性
+    - `let`、`const`不会给`window`上添加任何属性
+    - V8中，变量被保存到`VariableMap`中
+    - `window`对象是早期的`GO`对象，在最新的实现中其实是浏览器添加的全局对象，并且一直保持了`window`和`var`之间值的相等性
+
+- `let/const`的块级作用域
+    - 在ES6中新增了块级作用域，并且通过`let`、`const`、`function`、`class`声明的标识符是具备块级作用域的限制的：
+    - 但是我们会发现函数拥有块级作用域，但是外面依然是可以访问的：
+        - 这是因为引擎会对函数的声明进行特殊的处理，允许像`var`那样进行提升
+    
+-  暂时性死区
+    - 在一个代码中，使用`let`、`const`声明的变量，在声明之前，变量都是不可以访问的
+
+#### 函数默认值
+- 参数的默认值我们通常会将其放到最后
+- 外默认值会改变函数的`length`的个数，默认值以及后面的参数都不计算在`length`之内了
+
+#### 函数的剩余参数
+
+- 如果最后一个参数是 `...` 为前缀的，那么它会将剩余的参数放到该参数中，并且作为一个数组
+- 剩余参数和`arguments`的区别
+    - 剩余参数只包含那些没有对应形参的实参，而 `arguments` 对象包含了传给函数的所有实参
+    - `arguments`对象不是一个真正的数组，而`rest`参数是一个真正的数组，可以进行数组的所有操作
+    - `arguments`是早期的ECMAScript中为了方便去获取所有的参数提供的一个数据结构，而`rest`参数是ES6中提供并且希望以此来替代`arguments`的
+- 剩余参数必须放到最后一个位置，否则会报错
+
+#### 展开语法
+
+- 展开语法(Spread syntax)：
+    - 可以在函数调用/数组构造时，将数组表达式或者`string`在语法层面展开；
+    - 还可以在构造字面量对象时, 将对象表达式按`key-value`的方式展开
+
+- 展开语法的场景：
+    - 在函数调用时使用；
+    - 在数组构造时使用；
+    - 在构建对象字面量时，也可以使用展开运算符，这个是在ES2018（ES9）中添加的新特性
+- **注意：展开运算符其实是一种浅拷贝**
+
+#### 数值的表示
+
+- 在ES6中规范了二进制和八进制的写法
+```js
+const num1 = 100 // 十进制
+
+// b -> binary
+const num2 = 0b100 // 二进制
+// o -> octonary
+const num3 = 0o100 // 八进制
+// x -> hexadecimal
+const num4 = 0x100 // 十六进制
+```
+- 在ES2021新增特性：数字过长时，可以使用_作为连接符
+```js
+// 大的数值的连接符(ES2021 ES12)
+const num = 10_000_000_000_000_000
+```
+
+#### Symbol
+
+> `Symbol`是ES6中新增的一个基本数据类型，翻译为符号
+> 用来生成一个独一无二的值
+
+- 为什么需要`Symbol`
+    - 在ES6之前，对象的属性名都是字符串形式，那么很容易造成属性名的冲突
+    - 比如原来有一个对象，我们希望在其中添加一个新的属性和值，但是我们在不确定它原来内部有什么内容的情况下，很容易造成冲突，从而覆盖掉它内部的某个属性
+- `Symbol`值是通过`Symbol`函数来生成的，生成后可以作为属性名
+    - 也就是在ES6中，对象的属性名可以使用字符串，也可以使用`Symbol`值
+- `Symbol`即使多次创建值，它们也是不同的
+- 我们也可以在创建`Symbol`值的时候传入一个描述`description`：这个是ES2019（ES10）新增的特性
+
+- 想创建相同的Symbol
+    - 可以使用`Symbol.for`方法
+    - 可以通过`Symbol.keyFor`方法来获取对应的`key`
+
+```js
+// 3.Symbol值作为key
+// 3.1.在定义对象字面量时使用
+const obj = {
+  [s1]: "abc",
+  [s2]: "cba"
+}
+
+// 3.2.新增属性
+obj[s3] = "nba"
+
+// 3.3.Object.defineProperty方式
+const s4 = Symbol()
+Object.defineProperty(obj, s4, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: "mba"
+})
+
+console.log(obj[s1], obj[s2], obj[s3], obj[s4])
+// 注意: 不能通过.语法获取
+// console.log(obj.s1)
+
+// 4.使用Symbol作为key的属性名,在遍历/Object.keys等中是获取不到这些Symbol值
+// 需要Object.getOwnPropertySymbols来获取所有Symbol的key
+console.log(Object.keys(obj))
+console.log(Object.getOwnPropertyNames(obj))
+console.log(Object.getOwnPropertySymbols(obj))
+const sKeys = Object.getOwnPropertySymbols(obj)
+for (const sKey of sKeys) {
+  console.log(obj[sKey])
+}
+
+// 5.Symbol.for(key)/Symbol.keyFor(symbol)
+const sa = Symbol.for("aaa")
+const sb = Symbol.for("aaa")
+console.log(sa === sb)
+
+const key = Symbol.keyFor(sa)
+console.log(key)
+const sc = Symbol.for(key)
+console.log(sa === sc)
+```
+
+#### Set的常见方法
+- Set常见的属性：
+    - size：返回Set中元素的个数
+- Set常用的方法：
+    - add(value)：添加某个元素，返回Set对象本身
+    - delete(value)：从set中删除和这个值相等的元素，返回boolean类型
+    - has(value)：判断set中是否存在某个元素，返回boolean类型
+    - clear()：清空set中所有的元素，没有返回值
+    - forEach(callback, [, thisArg])：通过forEach遍历set
+- 另外Set是支持for of的遍历的
+
+#### WeakSet使用
+- 和Set的区别
+    - 区别一：`WeakSet`中只能存放对象类型，不能存放基本数据类型
+    - 区别二：`WeakSet`对元素的引用是弱引用，如果没有其他引用对某个对象进行引用，那么GC可以对该对象进行回收
+- `WeakSet`常见的方法：
+    - `add(value)`：添加某个元素，返回`WeakSet`对象本身
+    - `delete(value)`：从`WeakSet`中删除和这个值相等的元素，返回`boolean`类型
+    - `has(value)`：判断`WeakSet`中是否存在某个元素，返回`boolean`类型
+- `WeakSet`不能遍历
+    - 因为`WeakSet`只是对对象的弱引用，如果我们遍历获取到其中的元素，那么有可能造成对象不能正常的销毁。
+    - 所以存储到`WeakSet`中的对象是没办法获取的
+
+```js
+// WeakSet的应用场景
+const personSet = new WeakSet()
+class Person {
+  constructor() {
+    personSet.add(this)
+  }
+
+  running() {
+    if (!personSet.has(this)) {
+      throw new Error("不能通过非构造方法创建出来的对象调用running方法")
+    }
+    console.log("running~", this)
+  }
+}
+
+let p = new Person()
+p.running()
+p = null
+
+p.running.call({name: "why"})
+```
+
+#### Map的基本使用
+- 对象存储映射关系只能用字符串（ES6新增了Symbol）作为属性名（key）
+- 某些情况下我们可能希望通过其他类型作为`key`，比如对象，这个时候会自动将对象转成字符串来作为`key`
+- `Map`常见的属性：
+    - `size`：返回`Map`中元素的个数
+- Map常见的方法：
+    - `set(key, value)`：在`Map`中添加`key`、`value`，并且返回整个`Map`对象
+    - `get(key)`：根据`key`获取`Map`中的`value`
+    - `has(key)`：判断是否包括某一个`key`，返回`Boolean`类型
+    - `delete(key)`：根据key删除一个键值对，返回`Boolean`类型
+    - `clear()`：清空所有的元素
+    - `forEach(callback, [, thisArg])`：通过`forEach`遍历`Map`
+- `Map`也可以通过`for of`进行遍历
+
+#### WeakMap的使用
+- 和Map的区别
+    - 区别一：WeakMap的key只能使用对象，不接受其他的类型作为key
+    - 区别二：WeakMap的key对对象想的引用是弱引用，如果没有其他引用引用这个对象，那么GC可以回收该对象
+- WeakMap常见的方法有四个：
+    - `set(key, value)`：在Map中添加`key`、`value`，并且返回整个Map对象
+    - `get(key)`：根据key获取Map中的`value`
+    - `has(key)`：判断是否包括某一个key，返回`Boolean`类型
+    - `delete(key)`：根据key删除一个键值对，返回`Boolean`类型
+
+- WeakMap的应用
+    - WeakMap也是不能遍历的
+    - 因为没有forEach方法，也不支持通过for of的方式进行遍历
+
+```js
+// 应用场景(vue3响应式原理)
+const obj1 = {
+  name: "why",
+  age: 18
+}
+
+function obj1NameFn1() {
+  console.log("obj1NameFn1被执行")
+}
+
+function obj1NameFn2() {
+  console.log("obj1NameFn2被执行")
+}
+
+function obj1AgeFn1() {
+  console.log("obj1AgeFn1")
+}
+
+function obj1AgeFn2() {
+  console.log("obj1AgeFn2")
+}
+
+const obj2 = {
+  name: "kobe",
+  height: 1.88,
+  address: "广州市"
+}
+
+function obj2NameFn1() {
+  console.log("obj1NameFn1被执行")
+}
+
+function obj2NameFn2() {
+  console.log("obj1NameFn2被执行")
+}
+
+// 1.创建WeakMap
+const weakMap = new WeakMap()
+
+// 2.收集依赖结构
+// 2.1.对obj1收集的数据结构
+const obj1Map = new Map()
+obj1Map.set("name", [obj1NameFn1, obj1NameFn2])
+obj1Map.set("age", [obj1AgeFn1, obj1AgeFn2])
+weakMap.set(obj1, obj1Map)
+
+// 2.2.对obj2收集的数据结构
+const obj2Map = new Map()
+obj2Map.set("name", [obj2NameFn1, obj2NameFn2])
+weakMap.set(obj2, obj2Map)
+
+// 3.如果obj1.name发生了改变
+// Proxy/Object.defineProperty
+obj1.name = "james"
+const targetMap = weakMap.get(obj1)
+const fns = targetMap.get("name")
+fns.forEach(item => item())
+```
+
+### ES7
+
+#### Array Includes
+
+- 在ES7之前，如果我们想判断一个数组中是否包含某个元素，需要通过 `indexOf` 获取结果，并且判断是否为 `-1`
+- 在ES7中，我们可以通过`includes`来判断一个数组中是否包含一个指定的元素，根据情况，如果包含则返回 `true`，否则返回`false`
+
+#### 指数(乘方) exponentiation运算符
+
+- 在ES7之前，计算数字的乘方需要通过 `Math.pow` 方法来完成
+- 在ES7中，增加了 `**` 运算符，可以对数字来计算乘方
+
+### ES8
+#### Object values
+- 之前我们可以通过 `Object.keys` 获取一个对象所有的`key`
+- 在ES8中提供了 `Object.values` 来获取所有的`value`值
+
+#### Object entries
+
+- 通过 `Object.entries` 可以获取到一个数组，数组中会存放可枚举属性的键值对数组
+
+```js
+const obj = {
+  name: "why",
+  age: 18
+}
+
+console.log(Object.entries(obj)) // [ [ 'name', 'why' ], [ 'age', 18 ] ]
+const objEntries = Object.entries(obj)
+objEntries.forEach(item => {
+  console.log(item[0], item[1]) // name why // age 18
+})
+
+console.log(Object.entries(["abc", "cba", "nba"])) // [ [ '0', 'abc' ], [ '1', 'cba' ], [ '2', 'nba' ] ]
+console.log(Object.entries("abc")) // [ [ '0', 'a' ], [ '1', 'b' ], [ '2', 'c' ] ]
+```
+
+#### String Padding
+- 某些字符串我们需要对其进行前后的填充，来实现某种格式化效果，ES8中增加了`padStart` 和 `padEnd` 方法，分别是对字符串的首尾进行填充的
+```js
+const message = "Hello World"
+
+const newMessage = message.padStart(15, "*").padEnd(20, "-")
+console.log(newMessage) // ****Hello World-----
+```
+
+- 应用场景
+```js
+const cardNumber = "321324234242342342341312"
+const lastFourCard = cardNumber.slice(-4)
+const finalCard = lastFourCard.padStart(cardNumber.length, "*")
+console.log(finalCard) // ********************1312
+```
+
+#### Trailing Commas
+
+- 在ES8中，我们允许在函数定义和调用时多加一个逗号
+```js
+function foo(m, n,) {
+
+}
+
+foo(20, 30,)
+```
+
+#### Object Descriptors
+>ES8中增加了另一个对对象的操作是 `Object.getOwnPropertyDescriptors`
+> `Object.getOwnPropertyDescriptors(obj)` 方法用来获取一个对象的所有自身属性的描述符
+- 浅拷贝一个对象
+    - `Object.assign()` 方法将所有可枚举（`Object.propertyIsEnumerable()` 返回 `true`）和自有（`Object.hasOwnProperty()` 返回 `true`）属性从一个或多个源对象复制到目标对象，返回修改后的对象。
+        ```js
+        const target = { a: 1, b: 2 };
+        const source = { b: 4, c: 5 };
+
+        const returnedTarget = Object.assign(target, source);
+
+        console.log(target);
+        // expected output: Object { a: 1, b: 4, c: 5 }
+
+        console.log(returnedTarget);
+        // expected output: Object { a: 1, b: 4, c: 5 }
+        ```
+        - 针对深拷贝, 需要使用其他办法，因为 `Object.assign()` 只复制属性值。
+        - 假如源对象是一个对象的引用，它仅仅会复制其引用值
+        - 原型链上的属性和不可枚举属性不能被复制
+    - `Object.assign()` 方法只能拷贝源对象的可枚举的自身属性，同时拷贝时无法拷贝属性的特性们，而且访问器属性会被转换成数据属性，也无法拷贝源对象的原型，该方法配合 `Object.create()` 方法可以实现上面说的这些
+```js
+Object.create(
+  Object.getPrototypeOf(obj),
+  Object.getOwnPropertyDescriptors(obj)
+)
+```
+- 创建子类
+    - 创建子类的典型方法是定义子类，将其原型设置为超类的实例，然后在该实例上定义属性。这么写很不优雅，特别是对于 getters 和 setter 而言。 相反，您可以使用此代码设置原型：
+```js
+function superclass() {}
+superclass.prototype = {
+  // 在这里定义方法和属性
+};
+function subclass() {}
+subclass.prototype = Object.create(superclass.prototype, Object.getOwnPropertyDescriptors({
+  // 在这里定义方法和属性
+}));
+```
+
+### ES10
+
+#### flat flatMap
+
+- `flat()` 方法会按照一个可指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素合并为一个新数组返回
+- `flatMap()` 方法首先使用映射函数映射每个元素，然后将结果压缩成一个新数组
+    - 注意一：`flatMap`是先进行`map`操作，再做`flat`的操作
+    - 注意二：`flatMap`中的`flat`相当于深度为`1`
+```js
+// 1.flat的使用
+const nums = [10, 20, [2, 9], [[30, 40], [10, 45]], 78, [55, 88]]
+const newNums = nums.flat()
+console.log(newNums) // [ 10, 20, 2, 9, [ 30, 40 ], [ 10, 45 ], 78, 55, 88 ]
+
+const newNums2 = nums.flat(2)
+console.log(newNums2)
+// [
+//     10, 20,  2,  9, 30,
+//     40, 10, 45, 78, 55,
+//     88
+//   ]
+
+// 2.flatMap的使用
+const nums2 = [10, 20, 30]
+const newNums3 = nums2.flatMap(item => {
+  return item * 2
+})
+const newNums4 = nums2.map(item => {
+  return item * 2
+})
+
+console.log(newNums3) // [ 20, 40, 60 ]
+console.log(newNums4) // [ 20, 40, 60 ]
+
+// 3.flatMap的应用场景
+const messages = ["Hello World", "hello lyh", "my name is coderwhy"]
+const words = messages.flatMap(item => {
+  return item.split(" ")
+})
+
+console.log(words)
+// [
+//     'Hello', 'World',
+//     'hello', 'lyh',
+//     'my',    'name',
+//     'is',    'coderwhy'
+//   ]
+```
+
+#### Object fromEntries
+
+- 可以通过 `Object.entries` 将一个对象转换成 `entries`，那么如果我们有一个`entries`了，如何将其转换成对象呢
+- ES10提供了 `Object.formEntries`来完成转换
+```js
+const obj = {
+  name: "why",
+  age: 18,
+  height: 1.88
+}
+
+const entries = Object.entries(obj)
+console.log(entries)
+
+const newObj = {}
+for (const entry of entries) {
+  newObj[entry[0]] = entry[1]
+}
+
+// 1.ES10中新增了Object.fromEntries方法
+const newObj1 = Object.fromEntries(entries)
+
+console.log(newObj1)
+```
+
+- 应用场景
+```js
+// 2.Object.fromEntries的应用场景
+const queryString = 'name=why&age=18&height=1.88'
+const queryParams = new URLSearchParams(queryString)
+for (const param of queryParams) {
+  console.log(param)
+}
+
+const paramObj = Object.fromEntries(queryParams)
+console.log(paramObj)
+```
+
+#### trimStart trimEnd
+
+- 单独去除前面或者后面，ES10中给我们提供了`trimStart`和`trimEnd`
+
+### ES11
+
+#### BigInt
+
+- 在早期的JavaScript中，我们不能正确的表示过大的数字：
+    - 大于`MAX_SAFE_INTEGER`的数值，表示的可能是不正确的
+
+- ES11中，引入了新的数据类型`BigInt`，用于表示大的整数
+    - `BitInt`的表示方法是在数值的后面加上`n`
+
+```js
+// ES11之前 max_safe_integer
+const maxInt = Number.MAX_SAFE_INTEGER
+console.log(maxInt) // 9007199254740991
+console.log(maxInt + 1)
+console.log(maxInt + 2)
+
+// ES11之后: BigInt
+const bigInt = 900719925474099100n
+console.log(bigInt + 10n)
+
+const num = 100
+console.log(bigInt + BigInt(num))
+
+const smallNum = Number(bigInt)
+console.log(smallNum)
+```
+
+#### Nullish Coalescing Operator
+
+- `Nullish Coalescing Operator`增加了空值合并操作符
+
+```js
+// ES11: 空值合并运算 ??
+
+const foo = undefined
+// const bar = foo || "default value"
+const bar = foo ?? "defualt value"
+
+console.log(bar)
+```
+
+#### Optional Chaining
+
+- 可选链也是ES11中新增一个特性，主要作用是让我们的代码在进行`null`和`undefined`判断时更加清晰和简洁
+
+```js
+// ES11提供了可选链(Optional Chainling)
+console.log(info.friend?.girlFriend?.name)
+```
+
+#### Global This
+
+- 之前我们希望获取JavaScript环境的全局对象，不同的环境获取的方式是不一样的
+    - 比如在浏览器中可以通过`this`、`window`来获取
+    - 比如在Node中我们需要通过`global`来获取
+- 那么在ES11中对获取全局对象进行了统一的规范：`globalThis`
+
+```js
+// 获取某一个环境下的全局对象(Global Object)
+
+// 在浏览器下
+console.log(window)
+console.log(this)
+
+// 在node下
+console.log(global)
+
+// ES11
+console.log(globalThis)
+```
+
+#### for..in标准化
+
+> `for...in`是用于遍历对象的`key`的
+
+```js
+// for...in 标准化: ECMA
+const obj = {
+  name: "why",
+  age: 18
+}
+
+for (const item in obj) {
+  console.log(item)
+}
+```
+
+### ES12
+
+#### FinalizationRegistry
+
+- `FinalizationRegistry` 对象可以让你在对象被垃圾回收时请求一个回调。
+    - `FinalizationRegistry` 提供了这样的一种方法：当一个在注册表中注册的对象被回收时，请求在某个时间点上调用一个清理回调。（清理回调有时被称为 `finalizer` ）;
+    - 你可以通过调用`register`方法，注册任何你想要清理回调的对象，传入该对象和所含的值;
+```js
+// ES12: FinalizationRegistry类
+const finalRegistry = new FinalizationRegistry((value) => {
+  console.log("注册在finalRegistry的对象, 某一个被销毁", value)
+})
+
+let obj = { name: "why" }
+let info = { age: 18 }
+
+finalRegistry.register(obj, "obj")
+finalRegistry.register(info, "value")
+
+obj = null
+info = null
+```
+
+#### WeakRefs
+
+- 如果我们默认将一个对象赋值给另外一个引用，那么这个引用是一个强引用：
+    - 如果我们希望是一个弱引用的话，可以使用`WeakRef`
+
+```js
+// ES12: WeakRef类
+// WeakRef.prototype.deref: 
+// > 如果原对象没有销毁, 那么可以获取到原对象
+// > 如果原对象已经销毁, 那么获取到的是undefined
+const finalRegistry = new FinalizationRegistry((value) => {
+  console.log("注册在finalRegistry的对象, 某一个被销毁", value)
+})
+
+let obj = { name: "why" }
+let info = new WeakRef(obj)
+
+finalRegistry.register(obj, "obj")
+
+obj = null
+
+setTimeout(() => {
+  console.log(info.deref()?.name) // why
+  console.log(info.deref() && info.deref().name) // why
+}, 10000)
+```
+
+#### logical assignment operators
+```js
+// 1.||= 逻辑或赋值运算
+let message = "hello world"
+message = message || "default value"
+message ||= "default value"
+console.log(message)
+```
+```js
+// 2.&&= 逻辑与赋值运算
+// &&
+const obj = {
+  name: "why",
+  foo: function() {
+    console.log("foo函数被调用")
+    
+  }
+}
+
+// obj.foo && obj.foo()
+
+// &&=
+let info = {
+  name: "why"
+}
+
+// 1.判断info
+// 2.有值的情况下, 取出info.name
+info = info && info.name
+info &&= info.name
+console.log(info)
+```
+```js
+// 3.??= 逻辑空赋值运算
+let message = 0
+message ??= "default value"
+console.log(message)
+```
+
+## Proxy-Reflect vue2-vue3响应式原理
+
+### Proxy
+
+- 监听对象的操作
+    - 需求：有一个对象，我们希望监听这个对象中的属性被设置或获取的过程
+    - 利用 `Object.defineProperty` 的存储属性描述符来对属性的操作进行监听
+    - 缺点：`Object.defineProperty`设计的初衷，不是为了去监听截止一个对象中
+    所有的属性的，，如果我们想监听更加丰富的操作，比如新增属性、删除属性，那么
+    `Object.defineProperty`是无能为力的
+
+#### Proxy基本使用
+
+- 在ES6中，新增了一个`Proxy`类，是用于帮助我们创建一个代理的：
+    - 也就是说，如果我们希望监听一个对象的相关操作，那么我们可以先创建一个代理对象（Proxy对象）
+    - 之后对该对象的所有操作，都通过代理对象来完成，代理对象可以监听我们想要对原对象进行哪些操作
+
+- 可以将上面的案例用Proxy来实现一次：
+    - 首先，我们需要`new` Proxy对象，并且传入需要侦听的对象以及一个处理对象，可以称之为`handler`
+    `const p = new Proxy(target, handler)`
+    - 其次，我们之后的操作都是直接对Proxy的操作，而不是原有的对象，因为我们需要在`handler`里面进行侦听
+
+#### Proxy的set和get捕获器
+
+- 如果我们想要侦听某些具体的操作，那么就可以在`handler`中添加对应的捕捉器（`Trap`）
+
+- `set`和`get`分别对应的是函数类型；
+    - `set`函数有四个参数：
+        - `target`：目标对象（侦听的对象）
+        - `property`：将被设置的属性`key`
+        - `value`：新属性值
+        - `receiver`：调用的代理对象
+    - `get`函数有三个参数：
+        - `target`：目标对象（侦听的对象）
+        - `property`：被获取的属性key
+        - `receiver`：调用的代理对象
+```js
+const obj = {
+  name: "why",
+  age: 18
+}
+
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get: function(target, key) {
+    console.log(`监听到对象的${key}属性被访问了`, target)
+    return target[key]
+  },
+
+  // 设置值时的捕获器
+  set: function(target, key, newValue) {
+    console.log(`监听到对象的${key}属性被设置值`, target)
+    target[key] = newValue
+  }
+})
+
+console.log(objProxy.name)
+// why
+// 监听到对象的name属性被访问了 { name: 'why', age: 18 }
+console.log(objProxy.age)
+// 监听到对象的age属性被访问了 { name: 'why', age: 18 }
+// 18
+
+objProxy.name = "kobe"
+objProxy.age = 30
+
+console.log(obj.name)
+console.log(obj.age)
+// 监听到对象的name属性被设置值 { name: 'why', age: 18 }
+// 监听到对象的age属性被设置值 { name: 'kobe', age: 18 }
+// kobe
+// 30
+```
+
+#### Proxy所有捕获器
+- `handler.getPrototypeOf()`
+    -` Object.getPrototypeOf` 方法的捕捉器。
+- `handler.setPrototypeOf()`
+    - `Object.setPrototypeOf` 方法的捕捉器。
+- `handler.isExtensible()`
+    - `Object.isExtensible` 方法的捕捉器。
+- `handler.preventExtensions()`
+    - `Object.preventExtensions` 方法的捕捉器。
+- `handler.getOwnPropertyDescriptor()`
+    - `Object.getOwnPropertyDescriptor` 方法的捕捉器。
+- `handler.defineProperty()`
+    - `Object.defineProperty` 方法的捕捉器。
+- `handler.ownKeys()`
+    - `Object.getOwnPropertyNames` 方法和 `Object.getOwnPropertySymbols` 方法的捕捉器。
+- `handler.has()`
+    - `in` 操作符的捕捉器。
+- `handler.get()`
+    - 属性读取操作的捕捉器。
+- `handler.set()`
+    - 属性设置操作的捕捉器。
+- `handler.deleteProperty()`
+    - delete 操作符的捕捉器。
+- `handler.apply()`
+    - 函数调用操作的捕捉器。
+- `handler.construct()`
+    - new 操作符的捕捉器。
+```js
+const obj = {
+  name: "why", // 数据属性描述符
+  age: 18
+}
+
+// 变成一个访问属性描述符
+// Object.defineProperty(obj, "name", {
+
+// })
+
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get: function(target, key) {
+    console.log(`监听到对象的${key}属性被访问了`, target)
+    return target[key]
+  },
+
+  // 设置值时的捕获器
+  set: function(target, key, newValue) {
+    console.log(`监听到对象的${key}属性被设置值`, target)
+    target[key] = newValue
+  },
+
+  // 监听in的捕获器
+  has: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    return key in target
+  },
+
+  // 监听delete的捕获器
+  deleteProperty: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    delete target[key]
+  }
+})
+
+
+// in操作符
+console.log("name" in objProxy)
+
+// delete操作
+delete objProxy.name
+```
+
+#### Proxy的construct和apply
+
+> 捕捉器中`construct`和`apply`，是应用于函数对象的
+
+```js
+function foo() {
+
+}
+
+const fooProxy = new Proxy(foo, {
+  apply: function(target, thisArg, argArray) {
+    console.log("对foo函数进行了apply调用")
+    return target.apply(thisArg, argArray)
+  },
+  construct: function(target, argArray, newTarget) {
+    console.log("对foo函数进行了new调用")
+    return new target(...argArray)
+  }
+})
+
+fooProxy.apply({}, ["abc", "cba"])
+new fooProxy("abc", "cba")
+```
+
+### Reflect
+
+- `Reflect`也是ES6新增的一个API，它是一个对象，字面的意思是反射。
+    - 它主要提供了很多操作`JavaScript`对象的方法，有点像`Object`中操作对象的方法；
+    - 比如`Reflect.getPrototypeOf(target)`类似于 `Object.getPrototypeOf()`；
+    -  比如`Reflect.defineProperty(target, propertyKey, attributes)`类似于`Object.defineProperty()`
+- 如果我们有`Object`可以做这些操作，那么为什么还需要有`Reflect`这样的新增对象呢？
+    - 这是因为在早期的ECMA规范中没有考虑到这种对 对象本身 的操作如何设计会更加规范，所以将这些`API`放到了`Object`上面；
+    - 但是`Object`作为一个构造函数，这些操作实际上放到它身上并不合适；
+    - 另外还包含一些类似于 `in`、`delete`操作符，让JS看起来有一些奇怪
+    - 所以在ES6中新增了`Reflect`，让我们这些操作都集中到了`Reflect`对象上；
+- `Object`和`Reflect`对象之间的API关系，可以参考MDN文档：
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect/Comparing_Reflect_and_Object_methods
+
+- Reflect的常见方法
+    - `Reflect.getPrototypeOf(target)`
+        - 类似于 `Object.getPrototypeOf()`。
+    - `Reflect.setPrototypeOf(target, prototype)`
+        - 设置对象原型的函数. 返回一个 `Boolean`， 如果更新成功，则返回`true`。
+    - `Reflect.isExtensible(target)`
+        - 类似于 `Object.isExtensible()`
+    - `Reflect.preventExtensions(target)`
+        - 类似于 `Object.preventExtensions()`。返回一个`Boolean`。
+    - `Reflect.getOwnPropertyDescriptor(target, propertyKey)`
+        - 类似于 `Object.getOwnPropertyDescriptor()`。如果对象中存在该属性，则返回对应的属性描述符, 否则返回 `undefined`
+    - `Reflect.defineProperty(target, propertyKey, attributes)`
+        - 和 `Object.defineProperty()` 类似。如果设置成功就会返回 `true`
+    - `Reflect.ownKeys(target)`
+        - 返回一个包含所有自身属性（不包含继承属性）的数组。(类似于`Object.keys`(), 但不会受`enumerable`影响)
+    - `Reflect.has(target, propertyKey)`
+        - 判断一个对象是否存在某个属性，和 `in` 运算符 的功能完全相同。
+    - `Reflect.get(target, propertyKey[, receiver])`
+        - 获取对象身上某个属性的值，类似于 `target[name]`。
+    - `Reflect.set(target, propertyKey, value[, receiver])`
+        - 将值分配给属性的函数。返回一个`Boolean`，如果更新成功，则返回`true`。
+    - `Reflect.deleteProperty(target, propertyKey)`
+        - 作为函数的`delete`操作符，相当于执行 `delete target[name]`。
+    - `Reflect.apply(target, thisArgument, argumentsList)`
+        - 对一个函数进行调用操作，同时可以传入一个数组作为调用参数。和`Function.prototype.apply()` 功能类似。
+    - `Reflect.construct(target, argumentsList[, newTarget])`
+        - 对构造函数进行 `new` 操作，相当于执行 `new target(...args)`。
+
+- `Reflect`的使用
+    - 可以将之前`Proxy`案例中对原对象的操作，都修改为`Reflect`来操作
+
+```js
+const obj = {
+  name: "why",
+  age: 18
+}
+
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    console.log("get---------")
+    return Reflect.get(target, key)
+  },
+  set: function(target, key, newValue, receiver) {
+    console.log("set---------")
+    target[key] = newValue
+
+    const result = Reflect.set(target, key, newValue)
+    if (result) {
+    } else {
+    }
+  }
+})
+
+objProxy.name = "kobe"
+console.log(objProxy.name)
+```
+
+#### Receiver的作用
+
+- 在使用`getter`、`setter`的时候有一个`receiver`的参数
+- 如果我们的源对象（obj）有`setter`、`getter`的访问器属性，那么可以通过`receiver`来改变里面的`this`
+
+```js
+const obj = {
+  _name: "why",
+  get name() {
+    return this._name
+  },
+  set name(newValue) {
+    this._name = newValue
+  }
+}
+
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    // receiver是创建出来的代理对象
+    console.log("get方法被访问--------", key, receiver)
+    console.log(receiver === objProxy)
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    console.log("set方法被访问--------", key)
+    Reflect.set(target, key, newValue, receiver)
+  }
+})
+
+// console.log(objProxy.name)
+objProxy.name = "kobe"
+```
+
+#### Reflect的construct
+```js
+function Student(name, age) {
+  this.name = name
+  this.age = age
+}
+
+function Teacher() {
+
+}
+
+const stu = new Student("why", 18)
+console.log(stu)
+console.log(stu.__proto__ === Student.prototype)
+
+// 执行Student函数中的内容, 但是创建出来对象是Teacher对象
+const teacher = Reflect.construct(Student, ["why", 18], Teacher)
+console.log(teacher)
+console.log(teacher.__proto__ === Teacher.prototype)
+```
+
+### 响应式
+
+> 可以自动响应数据变量的代码机制，我们就称之为是响应式的
+
+- m有一个初始化的值，有一段代码使用了这个值
+- 那么在m有一个新的值时，这段代码可以自动重新执行
+
+#### 响应式函数的实现
+
+- 响应式函数设计
+    - 当数据发生变化时，自动去执行某一个函数
+- 问题：在开发中我们是有很多的函数的，我们如何区分一个函数需要响应式，还是不需要响应式呢
+    - 下面的函数中 foo 需要在obj的name发生变化时，重新执行，做出相应
+    - bar函数是一个完全独立于obj的函数，它不需要执行任何响应式的操作
+    ```js
+    function foo() {
+        let newName = obj.name
+        console.log(obj.name)
+    }
+    function bar() {
+        const res = 20 + 30
+        console.log(res)
+    }
+    ```
+- 怎么区分呢？
+- 封装一个新的函数`watchFn`
+    - 传入到`watchFn`的函数，就是需要响应式的
+```js
+const reactiveFns = []
+function watchFn(fn) {
+    reactiveFns.push(fn)
+    fn()
+}
+
+watchFn(function() {
+    let newName = obj.name
+    console.log(obj.name)
+})
+
+watchFn(function() {
+    console.log('my name is' + obj.name)
+})
+```
+
+#### 响应式依赖的收集
+- 目前我们收集的依赖是放到一个数组中来保存的，但是这里会存在数据管理的问题：
+    - 我们在实际开发中需要监听很多对象的响应式
+    - 这些对象需要监听的不只是一个属性，它们很多属性的变化，都会有对应的响应式函数
+    - 我们不可能在全局维护一大堆的数组来保存这些响应函数
+- 所以我们要设计一个类，这个类用于管理某一个对象的某一个属性的所有响应式函数：
+    - 相当于替代了原来的简单 `reactiveFns` 的数组
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+const depend = new Depend()
+function watchFn(fn) {
+  depend.addDepend(fn)
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+watchFn(function() {
+  const newName = obj.name
+  console.log("你好啊, 李银河")
+  console.log("Hello World")
+  console.log(obj.name)
+})
+
+watchFn(function() {
+  console.log(obj.name, "demo function -------")
+})
+
+obj.name = "kobe"
+depend.notify()
+```
+
+#### 监听对象的变化
+
+- 监听对象的变量：
+    - 方式一：通过`Object.defineProperty`的方式（vue2采用的方式）
+    - 方式二：通过`new Proxy`的方式（vue3采用的方式）
+- 先以`Proxy`的方式来监听
+
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+const depend = new Depend()
+function watchFn(fn) {
+  depend.addDepend(fn)
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    Reflect.set(target, key, newValue, receiver)
+    depend.notify()
+  }
+})
+
+watchFn(function() {
+  const newName = objProxy.name
+  console.log("你好啊, 李银河")
+  console.log("Hello World")
+  console.log(objProxy.name) // 100行
+})
+
+watchFn(function() {
+  console.log(objProxy.name, "demo function -------")
+})
+
+watchFn(function() {
+  console.log(objProxy.age, "age 发生变化是需要执行的----1")
+})
+
+watchFn(function() {
+  console.log(objProxy.age, "age 发生变化是需要执行的----2")
+})
+
+objProxy.name = "kobe"
+objProxy.name = "james"
+objProxy.name = "curry"
+
+objProxy.age = 100
+```
+
+#### 对象的依赖管理
+
+- 目前是创建了一个`Depend`对象，用来管理对于`name`变化需要监听的响应函数：
+    - 但是实际开发中我们会有不同的对象，另外会有不同的属性需要管理
+    - 我们如何可以使用一种数据结构来管理不同对象的不同依赖关系呢
+-  通过`WeakMap`管理这种响应式的数据依赖
+![WeakMap管理响应式的数据依赖](/image/06/WeakMap%E7%AE%A1%E7%90%86%E5%93%8D%E5%BA%94%E5%BC%8F%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96.png)
+
+- 对象依赖管理的实现
+    - 可以写一个`getDepend`函数专门来管理这种依赖关系
+
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+const depend = new Depend()
+function watchFn(fn) {
+  depend.addDepend(fn)
+}
+
+// 封装一个获取depend函数
+const targetMap = new WeakMap()
+function getDepend(target, key) {
+  // 根据target对象获取map的过程
+  let map = targetMap.get(target)
+  if (!map) {
+    map = new Map()
+    targetMap.set(target, map)
+  }
+
+  // 根据key获取depend对象
+  let depend = map.get(key)
+  if (!depend) {
+    depend = new Depend()
+    map.set(key, depend)
+  }
+  return depend
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    Reflect.set(target, key, newValue, receiver)
+    // depend.notify()
+    const depend = getDepend(target, key)
+    depend.notify()
+  }
+})
+```
+
+#### 正确的依赖收集
+
+- 之前收集依赖的地方是在 `watchFn` 中：
+    - 但是这种收集依赖的方式我们根本不知道是哪一个`key`的哪一个`depend`需要收集依赖
+    - 你只能针对一个单独的`depend`对象来添加你的依赖对象
+- 正确的应该是在哪里收集呢？应该在我们调用了`Proxy`的`get`捕获器时
+    - 因为如果一个函数中使用了某个对象的`key`，那么它应该被收集依赖
+
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    console.log(this.reactiveFns)
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+let activeReactiveFn = null
+function watchFn(fn) {
+  activeReactiveFn = fn
+  fn()
+  activeReactiveFn = null
+}
+
+// 封装一个获取depend函数
+const targetMap = new WeakMap()
+function getDepend(target, key) {
+  // 根据target对象获取map的过程
+  let map = targetMap.get(target)
+  if (!map) {
+    map = new Map()
+    targetMap.set(target, map)
+  }
+
+  // 根据key获取depend对象
+  let depend = map.get(key)
+  if (!depend) {
+    depend = new Depend()
+    map.set(key, depend)
+  }
+  return depend
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    // 根据target.key获取对应的depend
+    const depend = getDepend(target, key)
+    // 给depend对象中添加响应函数
+    depend.addDepend(activeReactiveFn)
+
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    Reflect.set(target, key, newValue, receiver)
+    // depend.notify()
+    const depend = getDepend(target, key)
+    depend.notify()
+  }
+})
+```
+
+#### 对Depend重构
+
+- 有两个问题：
+    - 问题一：如果函数中有用到两次`key`，比如`name`，那么这个函数会被收集两次；
+    - 问题二：我们并不希望将添加`reactiveFn`放到`get`中，以为它是属于`Dep`的行为
+- 所以我们需要对`Depend`类进行重构：
+    - 解决问题一的方法：不使用数组，而是使用`Set`
+    - 解决问题二的方法：添加一个新的方法，用于收集依赖
+```js
+// 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+class Depend {
+  constructor() {
+    this.reactiveFns = new Set()
+  }
+
+  // addDepend(reactiveFn) {
+  //   this.reactiveFns.add(reactiveFn)
+  // }
+
+  depend() {
+    if (activeReactiveFn) {
+      this.reactiveFns.add(activeReactiveFn)
+    }
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+function watchFn(fn) {
+  activeReactiveFn = fn
+  fn()
+  activeReactiveFn = null
+}
+
+// 封装一个获取depend函数
+const targetMap = new WeakMap()
+function getDepend(target, key) {
+  // 根据target对象获取map的过程
+  let map = targetMap.get(target)
+  if (!map) {
+    map = new Map()
+    targetMap.set(target, map)
+  }
+
+  // 根据key获取depend对象
+  let depend = map.get(key)
+  if (!depend) {
+    depend = new Depend()
+    map.set(key, depend)
+  }
+  return depend
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    // 根据target.key获取对应的depend
+    const depend = getDepend(target, key)
+    // 给depend对象中添加响应函数
+    // depend.addDepend(activeReactiveFn)
+    depend.depend()
+
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    Reflect.set(target, key, newValue, receiver)
+    // depend.notify()
+    const depend = getDepend(target, key)
+    depend.notify()
+  }
+})
+```
+
+#### 创建响应式对象
+
+- 我们目前的响应式是针对于obj一个对象的，我们可以创建出来一个函数，针对所有的对象都可以变成响应式对象
+
+```js
+// 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+class Depend {
+  constructor() {
+    this.reactiveFns = new Set()
+  }
+
+  // addDepend(reactiveFn) {
+  //   this.reactiveFns.add(reactiveFn)
+  // }
+
+  depend() {
+    if (activeReactiveFn) {
+      this.reactiveFns.add(activeReactiveFn)
+    }
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+function watchFn(fn) {
+  activeReactiveFn = fn
+  fn()
+  activeReactiveFn = null
+}
+
+// 封装一个获取depend函数
+const targetMap = new WeakMap()
+function getDepend(target, key) {
+  // 根据target对象获取map的过程
+  let map = targetMap.get(target)
+  if (!map) {
+    map = new Map()
+    targetMap.set(target, map)
+  }
+
+  // 根据key获取depend对象
+  let depend = map.get(key)
+  if (!depend) {
+    depend = new Depend()
+    map.set(key, depend)
+  }
+  return depend
+}
+
+function reactive(obj) {
+  return new Proxy(obj, {
+    get: function(target, key, receiver) {
+      // 根据target.key获取对应的depend
+      const depend = getDepend(target, key)
+      // 给depend对象中添加响应函数
+      // depend.addDepend(activeReactiveFn)
+      depend.depend()
+  
+      return Reflect.get(target, key, receiver)
+    },
+    set: function(target, key, newValue, receiver) {
+      Reflect.set(target, key, newValue, receiver)
+      // depend.notify()
+      const depend = getDepend(target, key)
+      depend.notify()
+    }
+  })
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = reactive({
+  name: "why", // depend对象
+  age: 18 // depend对象
+})
+
+const infoProxy = reactive({
+  address: "广州市",
+  height: 1.88
+})
+
+watchFn(() => {
+  console.log(infoProxy.address)
+})
+
+infoProxy.address = "北京市"
+
+const foo = reactive({
+  name: "foo"
+})
+
+watchFn(() => {
+  console.log(foo.name)
+})
+
+foo.name = "bar"
+```
+
+#### Vue2响应式原理
+
+- Vue3主要是通过`Proxy`来监听数据的变化以及收集相关的依赖的
+- Vue2中通过`Object.defineProerty`的方式来实现对象属性的监听
+
+可以将`reactive`函数进行如下的重构：
+- 在传入对象时，我们可以遍历所有的key，并且通过属性存储描述符来监听属性的获取和修改
+- 在`setter`和`getter`方法中的逻辑和前面的`Proxy`是一致的
+
+```js
+// 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+class Depend {
+  constructor() {
+    this.reactiveFns = new Set()
+  }
+
+  // addDepend(reactiveFn) {
+  //   this.reactiveFns.add(reactiveFn)
+  // }
+
+  depend() {
+    if (activeReactiveFn) {
+      this.reactiveFns.add(activeReactiveFn)
+    }
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+function watchFn(fn) {
+  activeReactiveFn = fn
+  fn()
+  activeReactiveFn = null
+}
+
+// 封装一个获取depend函数
+const targetMap = new WeakMap()
+function getDepend(target, key) {
+  // 根据target对象获取map的过程
+  let map = targetMap.get(target)
+  if (!map) {
+    map = new Map()
+    targetMap.set(target, map)
+  }
+
+  // 根据key获取depend对象
+  let depend = map.get(key)
+  if (!depend) {
+    depend = new Depend()
+    map.set(key, depend)
+  }
+  return depend
+}
+
+function reactive(obj) {
+  // {name: "why", age: 18}
+  // ES6之前, 使用Object.defineProperty
+  Object.keys(obj).forEach(key => {
+    let value = obj[key]
+    Object.defineProperty(obj, key, {
+      get: function() {
+        const depend = getDepend(obj, key)
+        depend.depend()
+        return value
+      },
+      set: function(newValue) {
+        value = newValue
+        const depend = getDepend(obj, key)
+        depend.notify()
+      }
+    })
+  })
+  return obj
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = reactive({
+  name: "why", // depend对象
+  age: 18 // depend对象
+})
+
+const infoProxy = reactive({
+  address: "广州市",
+  height: 1.88
+})
+
+watchFn(() => {
+  console.log(infoProxy.address)
+})
+
+infoProxy.address = "北京市"
+
+const foo = reactive({
+  name: "foo"
+})
+
+watchFn(() => {
+  console.log(foo.name)
+})
+
+foo.name = "bar"
+foo.name = "hhh"
+```
+## Promise
+### Promise使用
+实例：
+- 我们调用一个函数，这个函数中发送网络请求（我们可以用定时器来模拟）
+- 如果发送网络请求成功了，那么告知调用者发送成功，并且将相关数据返回过去
+- 如果发送网络请求失败了，那么告知调用者发送失败，并且告知错误信息
+两个主要的问题：
+- 第一，我们需要自己来设计回调函数、回调函数的名称、回调函数的使用等
+- 第二，对于不同的人、不同的框架设计出来的方案是不同的，那么我们必须耐心去看别人的源码或者文档，以便可以理解它这个函数到底怎么用
+
+我们来看一下`Promise`的API是怎么样的：
+- `Promise`是一个类，可以翻译成承诺
+- 当我们需要给予调用者一个承诺：待会儿我会给你回调数据时，就可以创建一个`Promise`的对象
+- 在通过`new`创建`Promise`对象时，我们需要传入一个回调函数，我们称之为`executor`
+    - 这个回调函数会被立即执行，并且给传入另外两个回调函数`resolve`、`reject`
+    - 当我们调用`resolve`回调函数时，会执行`Promise`对象的`then`方法传入的回调函数
+    - 当我们调用`reject`回调函数时，会执行`Promise`对象的`catch`方法传入的回调函数
+
+ `Promise`使用过程，可以将它划分成三个状态：
+- 待定（`pending`）: 初始状态，既没有被兑现，也没有被拒绝
+    - 当执行`executor`中的代码时，处于该状态
+- 已兑现（`fulfilled`）: 意味着操作成功完成
+    - 执行了`resolve`时，处于该状态
+- 已拒绝（`rejected`）: 意味着操作失败
+    - 执行了`reject`时，处于该状态
+
+#### Executor
+
+> `Executor`是在创建`Promise`时需要传入的一个回调函数，这个回调函数会被立即执行，并且传入两个参数
+- 通常我们会在`Executor`中确定我们的`Promise`状态：
+    - 通过`resolve`，可以兑现（fulfilled）`Promise`的状态，我们也可以称之为已决议（resolved）
+    - 通过`reject`，可以拒绝（reject）`Promise`的状态
+注意：一旦状态被确定下来，`Promise`的状态会被 锁死，该`Promise`的状态是不可更改的
+- 在我们调用`resolve`的时候，如果`resolve`传入的值本身不是一个`Promise`，那么会将该`Promise`的状态变成 兑现（fulfilled）
+- 在之后我们去调用`reject`时，已经不会有任何的响应了（并不是这行代码不会执行，而是无法改变`Promise`状态）
+
+#### resolve不同值的区别
+- 情况一：如果`resolve`传入一个普通的值或者对象，那么这个值会作为`then`回调的参数；
+- 情况二：如果`resolve`中传入的是另外一个`Promise`，那么这个新`Promise`会决定原`Promise`的状态：
+- 情况三：如果`resolve`中传入的是一个对象，并且这个对象有实现`then`方法，那么会执行该`then`方法，并且根据`then`方法的结果来决定`Promise`的状态
+
+#### then方法
+> `then`方法是`Promise`对象上的一个方法：它其实是放在`Promise`的原型上的 `Promise.prototype.then`
+- `then`方法接受两个参数：
+    - `fulfilled`的回调函数：当状态变成`fulfilled`时会回调的函数
+    - `reject`的回调函数：当状态变成`reject`时会回调的函数
+- 一个`Promise`的`then`方法是可以被多次调用的：
+    - 每次调用我们都可以传入对应的`fulfilled`回调；
+    - 当`Promise`的状态变成`fulfilled`的时候，这些回调函数都会被执行
+- `then`方法本身是有返回值的，它的返回值是一个`Promise`，所以我们可以进行链式调用：
+    - 但是`then`方法返回的`Promise`到底处于什么样的状态呢？
+    - `Promise`有三种状态，那么这个`Promise`处于什么状态呢？
+        - 当`then`方法中的回调函数本身在执行的时候，那么它处于`pending`状态
+        - 当`then`方法中的回调函数返回一个结果时，那么它处于`fulfilled`状态，并且会将结果作为`resolve`的参数
+            - 情况一：返回一个普通的值
+            - 情况二：返回一个`Promise`
+            - 情况三：返回一个`thenable`值
+        - 当`then`方法抛出一个异常时，那么它处于`reject`状态
+
+#### catch方法
+
+- catch方法也是`Promise`对象上的一个方法：它也是放在`Promise`的原型上的`Promise.prototype.catch`
+-  一个`Promise`的`catch`方法是可以被多次调用的：
+    - 每次调用我们都可以传入对应的`reject`回调
+    - 当`Promise`的状态变成`reject`的时候，这些回调函数都会被执行
+
+- 事实上`catch`方法也是会返回一个`Promise`对象的，所以`catch`方法后面我们可以继续调用`then`方法或者`catch`方法：
+- `catch`传入的回调在执行完后，默认状态依然会是`fulfilled`的
+
+#### finally方法
+
+- `finally`是在ES9（ES2018）中新增的一个特性：表示无论`Promise`对象无论变成`fulfilled`还是`reject`状态，最终都会被执行的代码。
+- `finally`方法是不接收参数的，因为无论前面是`fulfilled`状态，还是`reject`状态，它都会执行
+
+#### Promise的类方法
+
+- 有时候我们已经有一个现成的内容了，希望将其转成`Promise`来使用，这个时候我们可以使用 `Promise.resolve` 方法来完成。
+    - `Promise.resolve`的用法相当于`new Promise`，并且执行`resolve`操作
+    - `resolve`参数的形态：
+        - 情况一：参数是一个普通的值或者对象
+        - 情况二：参数本身是`Promise`
+        - 情况三：参数是一个`thenable`
+- `Promise.reject`的用法相当于`new Promise`，只是会调用`reject`：
+    - `Promise.reject`传入的参数无论是什么形态，都会直接作为`reject`状态的参数传递到`catch`的
+
+- `Promise.all`：
+    - 它的作用是将多个`Promise`包裹在一起形成一个新的`Promise`；
+    - 新的`Promise`状态由包裹的所有`Promise`共同决定：
+        - 当所有的`Promise`状态变成`fulfilled`状态时，新的`Promise`状态为`fulfilled`，并且会将所有`Promise`的返回值组成一个数组；
+        - 当有一个`Promise`状态为`reject`时，新的`Promise`状态为`reject`，并且会将第一个`reject`的返回值作为参数
+
+- `allSettled`方法
+    - `all`方法有一个缺陷：当有其中一个`Promise`变成`reject`状态时，新`Promise`就会立即变成对应的`reject`状态。
+        - 那么对于`resolved`的，以及依然处于`pending`状态的`Promise`，我们是获取不到对应的结果的
+    - 在ES11（ES2020）中，添加了新的API `Promise.allSettled`
+        - 该方法会在所有的`Promise`都有结果（settled），无论是`fulfilled`，还是`reject`时，才会有最终的状态
+        - 并且这个`Promise`的结果一定是`fulfilled`的
+    - `allSettled`的结果是一个数组，数组中存放着每一个`Promise`的结果，并且是对应一个对象的
+    - 这个对象中包含`status`状态，以及对应的`value`值
+
+- `race`方法
+    - 如果有一个`Promise`有了结果，我们就希望决定最终新`Promise`的状态，那么可以使用`race`方法
+        - `race`是竞技、竞赛的意思，表示多个`Promise`相互竞争，谁先有结果，那么就使用谁的结果
+
+- `any`方法
+    - `any`方法是ES12中新增的方法，会等到一个`fulfilled`状态，才会决定新`Promise`的状态
+        - 如果所有的`Promise`都是`reject`的，那么也会等到所有的`Promise`都变成`rejected`状态
+    - 如果所有的`Promise`都是`reject`的，那么会报一个`AggregateError`的错误
+
+### Promise 实现
+
+1.  简单总结手写`Promise`
+
+-  一. `Promise`规范
+
+https://promisesaplus.com/
+
+-  二. `Promise`类设计
+
+```js
+class HYPromise {}
+```
+
+```js
+function HYPromise() {}
+```
+
+-  三. 构造函数的规划
+
+```js
+class HYPromise {
+  constructor(executor) {
+   	// 定义状态
+    // 定义resolve、reject回调
+    // resolve执行微任务队列：改变状态、获取value、then传入执行成功回调
+    // reject执行微任务队列：改变状态、获取reason、then传入执行失败回调
+    
+    // try catch
+    executor(resolve, reject)
+  }
+}
+```
+
+-  四. `then`方法的实现
+
+```js
+class HYPromise {
+  then(onFulfilled, onRejected) {
+    // this.onFulfilled = onFulfilled
+    // this.onRejected = onRejected
+    
+    // 1.判断onFulfilled、onRejected，会给默认值
+    
+    // 2.返回Promise resolve/reject
+    
+    // 3.判断之前的promise状态是否确定
+    // onFulfilled/onRejected直接执行（捕获异常）
+    
+    // 4.添加到数组中push(() => { 执行 onFulfilled/onRejected 直接执行代码})
+  }
+}
+```
+
+-  五. `catch`方法
+
+```js
+class HYPromise {
+  catch(onRejected) {
+    return this.then(undefined, onRejected)
+  }
+}
+```
+
+-  六. `finally`
+
+```js
+class HYPromise {
+  finally(onFinally) {
+    return this.then(() => {onFinally()}, () => {onFinally()})
+  }
+}
+```
+
+-  七. `resolve/reject`
+
+-  八. `all/allSettled`
+
+核心：要知道new Promise的resolve、reject在什么情况下执行
+
+all：
+
+* 情况一：所有的都有结果
+* 情况二：有一个`reject`
+
+`allSettled`：
+
+* 情况：所有都有结果，并且一定执行`resolve`
+
+-  九.`race/any`
+
+`race`:
+
+* 情况：只要有结果
+
+`any`:
+
+* 情况一：必须等到一个`resolve`结果
+* 情况二：都没有`resolve`，所有的都是`reject`
+
+2. 
+```js
+// ES6 ES2015
+// https://promisesaplus.com/
+const PROMISE_STATUS_PENDING = 'pending'
+const PROMISE_STATUS_FULFILLED = 'fulfilled'
+const PROMISE_STATUS_REJECTED = 'rejected'
+
+// 工具函数
+function execFunctionWithCatchError(execFn, value, resolve, reject) {
+  try {
+    const result = execFn(value)
+    resolve(result)
+  } catch(err) {
+    reject(err)
+  }
+}
+
+class HYPromise {
+  constructor(executor) {
+    this.status = PROMISE_STATUS_PENDING
+    this.value = undefined
+    this.reason = undefined
+    this.onFulfilledFns = []
+    this.onRejectedFns = []
+
+    const resolve = (value) => {
+      if (this.status === PROMISE_STATUS_PENDING) {
+        // 添加微任务
+        queueMicrotask(() => {
+          if (this.status !== PROMISE_STATUS_PENDING) return
+          this.status = PROMISE_STATUS_FULFILLED
+          this.value = value
+          this.onFulfilledFns.forEach(fn => {
+            fn(this.value)
+          })
+        });
+      }
+    }
+
+    const reject = (reason) => {
+      if (this.status === PROMISE_STATUS_PENDING) {
+        // 添加微任务
+        queueMicrotask(() => {
+          if (this.status !== PROMISE_STATUS_PENDING) return
+          this.status = PROMISE_STATUS_REJECTED
+          this.reason = reason
+          this.onRejectedFns.forEach(fn => {
+            fn(this.reason)
+          })
+        })
+      }
+    }
+
+    try {
+      executor(resolve, reject)
+    } catch (err) {
+      reject(err)
+    }
+  }
+
+  then(onFulfilled, onRejected) {
+    const defaultOnRejected = err => { throw err }
+    onRejected = onRejected || defaultOnRejected
+
+    const defaultOnFulfilled = value => { return value }
+    onFulfilled = onFulfilled || defaultOnFulfilled
+
+    return new HYPromise((resolve, reject) => {
+      // 1.如果在then调用的时候, 状态已经确定下来
+      if (this.status === PROMISE_STATUS_FULFILLED && onFulfilled) {
+        execFunctionWithCatchError(onFulfilled, this.value, resolve, reject)
+      }
+      if (this.status === PROMISE_STATUS_REJECTED && onRejected) {
+        execFunctionWithCatchError(onRejected, this.reason, resolve, reject)
+      }
+
+      // 2.将成功回调和失败的回调放到数组中
+      if (this.status === PROMISE_STATUS_PENDING) {
+        if (onFulfilled) this.onFulfilledFns.push(() => {
+          execFunctionWithCatchError(onFulfilled, this.value, resolve, reject)
+        })
+        if (onRejected) this.onRejectedFns.push(() => {
+          execFunctionWithCatchError(onRejected, this.reason, resolve, reject)
+        })
+      }
+    })
+  }
+
+  catch(onRejected) {
+    return this.then(undefined, onRejected)
+  }
+
+  finally(onFinally) {
+    this.then(() => {
+      onFinally()
+    }, () => {
+      onFinally()
+    })
+  }
+
+  static resolve(value) {
+    return new HYPromise((resolve) => resolve(value))
+  }
+
+  static reject(reason) {
+    return new HYPromise((resolve, reject) => reject(reason))
+  }
+
+  static all(promises) {
+    // 问题关键: 什么时候要执行resolve, 什么时候要执行reject
+    return new HYPromise((resolve, reject) => {
+      const values = []
+      promises.forEach(promise => {
+        promise.then(res => {
+          values.push(res)
+          if (values.length === promises.length) {
+            resolve(values)
+          }
+        }, err => {
+          reject(err)
+        })
+      })
+    })
+  }
+
+  static allSettled(promises) {
+    return new HYPromise((resolve) => {
+      const results = []
+      promises.forEach(promise => {
+        promise.then(res => {
+          results.push({ status: PROMISE_STATUS_FULFILLED, value: res})
+          if (results.length === promises.length) {
+            resolve(results)
+          }
+        }, err => {
+          results.push({ status: PROMISE_STATUS_REJECTED, value: err})
+          if (results.length === promises.length) {
+            resolve(results)
+          }
+        })
+      })
+    })
+  }
+
+  static race(promises) {
+    return new HYPromise((resolve, reject) => {
+      promises.forEach(promise => {
+        // promise.then(res => {
+        //   resolve(res)
+        // }, err => {
+        //   reject(err)
+        // })
+        promise.then(resolve, reject)
+      })
+    })
+  } 
+
+  static any(promises) {
+    // resolve必须等到有一个成功的结果
+    // reject所有的都失败才执行reject
+    const reasons = []
+    return new HYPromise((resolve, reject) => {
+      promises.forEach(promise => {
+        promise.then(resolve, err => {
+          reasons.push(err)
+          if (reasons.length === promises.length) {
+            reject(new AggregateError(reasons))
+          }
+        })
+      })
+    })
+  }
+}
+```
+
+
+## Iterator-Generator
+
+### 迭代器
+
+> 迭代器是帮助我们对某个数据结构进行遍历的对象
+
+- 在JavaScript中，迭代器也是一个具体的对象，这个对象需要符合迭代器协（iterator protocol）：
+    - 迭代器协议定义了产生一系列值（无论是有限还是无限个）的标准方式
+    - 那么在js中这个标准就是一个特定的`next`方法
+- `next`方法有如下的要求：
+    - 一个无参数或者一个参数的函数，返回一个应当拥有以下两个属性的对象：
+    -  `done`（`boolean`）
+        - 如果迭代器可以产生序列中的下一个值，则为 `false`。（这等价于没有指定 `done` 这个属性。）
+        - 如果迭代器已将序列迭代完毕，则为 `true`。这种情况下，`value` 是可选的，如果它依然存在，即为迭代结束之后的默认返回值。
+    - `value`
+        - 迭代器返回的任何 JavaScript 值。`done` 为 `true` 时可省略。
+
+### 可迭代对象
+- 当一个对象实现了`iterable protocol`协议时，它就是一个可迭代对象
+- 这个对象的要求是必须实现 `@@iterator` 方法，在代码中我们使用 `Symbol.iterator` 访问该属性
+- 当一个对象变成一个可迭代对象的时候，进行某些迭代操作，比如 `for...of` 操作时，其实就会调用它的`@@iterator` 方法
+```js
+// 创建一个迭代器对象来访问数组
+const iterableObj = {
+  names: ["abc", "cba", "nba"],
+  [Symbol.iterator]: function() {
+    let index = 0
+    return {
+      next: () => {
+        if (index < this.names.length) {
+          return { done: false, value: this.names[index++] }
+        } else {
+          return { done: true, value: undefined }
+        }
+      }
+    }
+  }
+}
+// for...of可以遍历的东西必须是一个可迭代对象
+```
+
+#### 原生迭代器对象
+事实上我们平时创建的很多原生对象已经实现了可迭代协议，会生成一个迭代器对象的：
+- `String`、`Array`、`Map`、`Set`、`arguments`对象、`NodeList`集合
+
+#### 可迭代对象的应用
+
+- `for ... of`、`展开语法（spread syntax）`、`yield*`、`解构赋值（Destructuring_assignment）`
+- 创建一些对象时：`new Map([Iterable])`、`new WeakMap([iterable])`、`new Set([iterable])`、`new WeakSet([iterable])`
+- 一些方法的调用：`Promise.all(iterable)`、`Promise.race(iterable)`、`Array.from(iterable)`
+
+#### 自定义类的迭代
+- 在面向对象开发中，我们可以通过`class`定义一个自己的类，这个类可以创建很多的对象
+- 如果我们也希望自己的类创建出来的对象默认是可迭代的，那么在设计类的时候我们就可以添加上 `@@iterator` 方法
+- 迭代器在某些情况下会在没有完全迭代的情况下中断
+    - 比如遍历的过程中通过`break`、`continue`、`return`、`throw`中断了循环操作
+    - 比如在解构的时候，没有解构所有的值
+    - 这个时候我们想要监听中断的话，可以添加`return`方法
+- 案例：创建一个`classroom`的类
+    - 教室中有自己的位置、名称、当前教室的学生
+    - 这个教室可以进来新学生（`push`）
+    - 创建的教室对象是可迭代对象
+```js
+// 案例: 创建一个教室类, 创建出来的对象都是可迭代对象
+class Classroom {
+  constructor(address, name, students) {
+    this.address = address
+    this.name = name
+    this.students = students
+  }
+
+  entry(newStudent) {
+    this.students.push(newStudent)
+  }
+
+  [Symbol.iterator]() {
+    let index = 0
+    return {
+      next: () => {
+        if (index < this.students.length) {
+          return { done: false, value: this.students[index++] }
+        } else {
+          return { done: true, value: undefined }
+        }
+      },
+      return: () => {
+        console.log("迭代器提前终止了~")
+        return { done: true, value: undefined }
+      }
+    }
+  }
+}
+
+const classroom = new Classroom("3幢5楼205", "计算机教室", ["james", "kobe", "curry", "why"])
+classroom.entry("lilei")
+
+for (const stu of classroom) {
+  console.log(stu)
+  if (stu === "why") break
+}
+
+function Person() {
+
+}
+
+Person.prototype[Symbol.iterator] = function() {
+  
+}
+```
+
+### 生成器
+
+> 生成器函数需要在`function`的后面加一个符号：`*`
+> 生成器函数可以通过`yield`关键字来控制函数的执行流程
+> 生成器函数的返回值是一个Generator（生成器）：
+>    生成器事实上是一种特殊的迭代器
+
+#### 生成器传递参数 – next函数
+
+> 在调用`next`函数的时候，可以给它传递参数，那么这个参数会作为上一个`yield`语句的返回值
+
+**注意：也就是说我们是为本次的函数代码块执行提供了一个值**
+
+#### 生成器提前结束 – return 函数
+- 还有一个可以给生成器函数传递参数的方法是通过`return`函数
+    - `return`传值后这个生成器函数就会结束，之后调用`next`不会继续生成值了
+
+#### 生成器抛出异常 – throw 函数
+- 除了给生成器函数内部传递参数之外，也可以给生成器函数内部抛出异常：
+    - 抛出异常后我们可以在生成器函数中捕获异常
+    - 但是在`catch`语句中不能继续`yield`新的值了，但是可以在`catch`语句外使用`yield`继续中断函数的执行
+```js
+function* foo() {
+  console.log("代码开始执行~")
+
+  const value1 = 100
+  try {
+    yield value1
+  } catch (error) {
+    console.log("捕获到异常情况:", error)
+
+    yield "abc"
+  }
+
+  console.log("第二段代码继续执行")
+  const value2 = 200
+  yield value2
+
+  console.log("代码执行结束~")
+}
+
+const generator = foo()
+
+const result = generator.next()
+generator.throw("error message")
+```
+
+#### 生成器替代迭代器
+
+```js
+// 1.生成器来替代迭代器
+function* createArrayIterator(arr) {
+
+  // 3.第三种写法 yield*
+  yield* arr
+
+  // 2.第二种写法
+  // for (const item of arr) {
+  //   yield item
+  // }
+  // 1.第一种写法
+  // yield "abc" // { done: false, value: "abc" }
+  // yield "cba" // { done: false, value: "abc" }
+  // yield "nba" // { done: false, value: "abc" }
+}
+```
+- 自定义类迭代 – 生成器实现
+```js
+// 2.创建一个函数, 这个函数可以迭代一个范围内的数字
+// 10 20
+function* createRangeIterator(start, end) {
+  let index = start
+  while (index < end) {
+    yield index++
+  }
+
+  // let index = start
+  // return {
+  //   next: function() {
+  //     if (index < end) {
+  //       return { done: false, value: index++ }
+  //     } else {
+  //       return { done: true, value: undefined }
+  //     }
+  //   }
+  // }
+}
+
+const rangeIterator = createRangeIterator(10, 20)
+console.log(rangeIterator.next())
+console.log(rangeIterator.next())
+console.log(rangeIterator.next())
+console.log(rangeIterator.next())
+console.log(rangeIterator.next())
+```
+- 自定义类迭代 – 生成器实现
+```js
+// 3.class案例
+class Classroom {
+  constructor(address, name, students) {
+    this.address = address
+    this.name = name
+    this.students = students
+  }
+
+  entry(newStudent) {
+    this.students.push(newStudent)
+  }
+
+  foo = () => {
+    console.log("foo function")
+  }
+
+  // [Symbol.iterator] = function*() {
+  //   yield* this.students
+  // }
+
+  *[Symbol.iterator]() {
+    yield* this.students
+  }
+}
+
+const classroom = new Classroom("3幢", "1102", ["abc", "cba"])
+for (const item of classroom) {
+  console.log(item)
+}
+```
+
+#### 对生成器的操作
+- 既然生成器是一个迭代器，那么我们可以对其进行如下的操作：
+
+```js
+const namesIterator1 = createArrayIterator(names)
+for (const item of namesIterator1) {
+    console.log(item)
+}
+
+const namesIterator2 = createArrayIterator(names)
+const set = new Set(namesIterator2)
+console.log(set)
+
+const namesIterator3 = createArrayIterator(names)
+Promise.all(namesIterator3).then(res => {
+    console.log(res)
+})
+```
+
+#### 异步处理方案
+```js
+// request.js
+function requestData(url) {
+  // 异步请求的代码会被放入到executor中
+  return new Promise((resolve, reject) => {
+    // 模拟网络请求
+    setTimeout(() => {
+      // 拿到请求的结果
+      resolve(url)
+    }, 2000);
+  })
+}
+
+// 需求: 
+// 1> url: why -> res: why
+// 2> url: res + "aaa" -> res: whyaaa
+// 3> url: res + "bbb" => res: whyaaabbb
+
+// 1.第一种方案: 多次回调
+// 回调地狱
+requestData("why").then(res => {
+  requestData(res + "aaa").then(res => {
+    requestData(res + "bbb").then(res => {
+      console.log(res)
+    })
+  })
+})
+
+
+// 2.第二种方案: Promise中then的返回值来解决
+requestData("why").then(res => {
+  return requestData(res + "aaa")
+}).then(res => {
+  return requestData(res + "bbb")
+}).then(res => {
+  console.log(res)
+})
+
+// 3.第三种方案: Promise + generator实现
+function* getData() {
+  const res1 = yield requestData("why")
+  const res2 = yield requestData(res1 + "aaa")
+  const res3 = yield requestData(res2 + "bbb")
+  const res4 = yield requestData(res3 + "ccc")
+  console.log(res4)
+}
+
+function* getDepartment() {
+  const user = yield requestData("id")
+  const department = yield requestData(user.departmentId)
+}
+
+// 1> 手动执行生成器函数
+const generator = getData()
+generator.next().value.then(res => {
+  generator.next(res).value.then(res => {
+    generator.next(res).value.then(res => {
+      generator.next(res)
+    })
+  })
+})
+
+// 2> 自己封装了一个自动执行的函数
+function execGenerator(genFn) {
+  const generator = genFn()
+  function exec(res) {
+    const result = generator.next(res)
+    if (result.done) {
+      return result.value
+    }
+    result.value.then(res => {
+      exec(res)
+    })
+  }
+  exec()
+}
+
+// execGenerator(getData)
+// execGenerator(getDepartment)
+
+// 3> 第三方包co自动执行
+// TJ: co/n(nvm)/commander(coderwhy/vue cli)/express/koa(egg)
+// const co = require('co')
+// co(getData)
+
+
+// 4.第四种方案: async/await
+async function getData() {
+  const res1 = await requestData("why")
+  const res2 = await requestData(res1 + "aaa")
+  const res3 = await requestData(res2 + "bbb")
+  const res4 = await requestData(res3 + "ccc")
+  console.log(res4)
+}
+
+getData()
+```
+
+## await-async-事件循环
+
+### 异步函数 async function
+- `async`关键字用于声明一个异步函数：
+    - `async`是`asynchronous`单词的缩写，异步、非同步
+    - `sync`是`synchronous`单词的缩写，同步、同时
+- 异步函数的执行流程
+    - 异步函数的内部代码执行过程和普通的函数是一致的，默认情况下也是会被同步执行
+    - 异步函数有返回值时，和普通函数会有区别：
+        - 情况一：异步函数也可以有返回值，但是异步函数的返回值会被包裹到`Promise.resolve`中
+        - 情况二：如果我们的异步函数的返回值是`Promise`，`Promise.resolve`的状态会由`Promise`决定
+        - 情况三：如果我们的异步函数的返回值是一个对象并且实现了`thenable`，那么会由对象的`then`方法来决定
+    -  如果我们在`async`中抛出了异常，那么程序并不会像普通函数一样报错，而是会作为`Promise`的`reject`来传递
+- `async`函数另外一个特殊之处就是可以在它内部使用await关键字，而普通函数中是不可以的
+    - 通常使用`await`是后面会跟上一个表达式，这个表达式会返回一个`Promise`
+    - 那么`await`会等到`Promise`的状态变成`fulfilled`状态，之后继续执行异步函数
+    - 如果`await`后面是一个普通的值，那么会直接返回这个值
+    - 如果`await`后面是一个`thenable`的对象，那么会根据对象的`then`方法调用来决定后续的值
+    - 如果`await`后面的表达式，返回的`Promise`是`reject`的状态，那么会将这个`reject`结果直接作为函数的`Promise`的`reject`值
+
+### 进程和线程
+1. 线程和进程是操作系统中的两个概念：
+- 进程（process）：计算机已经运行的程序，是操作系统管理程序的一种方式
+- 线程（thread）：操作系统能够运行运算调度的最小单位，通常情况下它被包含在进程中
+2.解释：
+- 进程：我们可以认为，启动一个应用程序，就会默认启动一个进程（也可能是多个进程）
+- 线程：每一个进程中，都会启动至少一个线程用来执行程序中的代码，这个线程被称之为主线程
+- 所以我们也可以说进程是线程的容器
+![操作系统 – 进程 – 线程](/image/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20%E2%80%93%20%E8%BF%9B%E7%A8%8B%20%E2%80%93%20%E7%BA%BF%E7%A8%8B.png)
+
+#### 操作系统的工作方式
+- 操作系统是如何做到同时让多个进程（边听歌、边写代码、边查阅资料）同时工作呢？
+    - 这是因为CPU的运算速度非常快，它可以快速的在多个进程之间迅速的切换
+    - 当我们进程中的线程获取到时间片时，就可以快速执行我们编写的代码
+    - 对于用户来说是感受不到这种快速的切换的
+
+#### 浏览器中的JavaScript线程
+
+> JavaScript是单线程的，但是JavaScript的线程应该有自己的容器进程：浏览器或者Node
+-  目前多数的浏览器其实都是多进程的，当我们打开一个tab页面时就会开启一个新的进程，这是为了防止一个页面卡死而造成所有页面无法响应，整个浏览器需要强制退出；
+    - 每个进程中又有很多的线程，其中包括执行JavaScript代码的线程
+- JavaScript的代码执行是在一个单独的线程中执行的
+    - 这就意味着JavaScript的代码，在同一个时刻只能做一件事
+    - 如果这件事是非常耗时的，就意味着当前的线程就会被阻塞
+- 所以真正耗时的操作，实际上并不是由JavaScript线程在执行的：
+    - 浏览器的每个进程是多线程的，那么其他线程可以来完成这个耗时的操作
+    - 比如网络请求、定时器，我们只需要在特性的时候执行应该有的回调即可
+
+##### 浏览器的事件循环
+
+- 如果在执行JavaScript代码的过程中，有异步操作呢？
+    - 函数会被放到入调用栈中，执行会立即结束，并不会阻塞后续代码的执行
+![浏览器的事件循环](/image/06/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.png)
+
+##### 宏任务和微任务
+- 事件循环中并非只维护着一个队列，事实上是有两个队列：
+    - 宏任务队列（macrotask queue）：`ajax`、`setTimeout`、`setInterval`、`DOM监听`、`UI Rendering`等
+    - 微任务队列（microtask queue）：`Promise的then回调`、 `Mutation Observer(观察器，在指定的 DOM 发生变化时被调用) API`、`queueMicrotask()`等
+- 那么事件循环对于两个队列的优先级是怎么样的呢？
+1. main script中的代码优先执行（编写的顶层script代码）；
+2. 在执行任何一个宏任务之前（不是队列，是一个宏任务），都会先查看微任务队列中是否有任务需要执行
+    - 也就是宏任务执行之前，必须保证微任务队列是空的；
+    - 如果不为空，那么就优先执行微任务队列中的任务（回调）
+
+```js
+Promise.resolve().then(() => {
+  console.log(0);
+  // 1.直接return一个值 相当于resolve(4)
+  // return 4
+
+  // 2.return thenable的值 多加一次微任务
+  return {
+    then: function(resolve) {
+      // 大量的计算
+      resolve(4)
+    }
+  }
+
+  // 3.return Promise
+  // 不是普通的值, 多加一次微任务
+  // Promise.resolve(4), 多加一次微任务
+  // 一共多加两次微任务
+  return Promise.resolve(4)
+}).then((res) => {
+  console.log(res)
+})
+```
+
+### Node的事件循环
+- 浏览器中的`EventLoop`是根据HTML5定义的规范来实现的，不同的浏览器可能会有不同的实现，而`Node`中是由libuv实现的
+- 这里我们来给出一个`Node`的架构图：
+    - libuv中主要维护了一个`EventLoop`和`worker threads（线程池）`
+    - `EventLoop`负责调用系统的一些其他操作：`文件的IO`、`Network`、`child-processes`等
+    - libuv是一个多平台的专注于`异步IO`的库，它最初是为Node开发的，但是现在也被使用到Luvit、Julia、pyuv等其他地方
+![image](/image/06/node%E7%9A%84%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
+
+#### Node事件循环的阶段
+- 事件循环像是一个桥梁，是连接着应用程序的JavaScript和系统调用之间的通道：
+    - 无论是我们的文件IO、数据库、网络IO、定时器、子进程，在完成对应的操作后，都会将对应的结果和回调函数放到事件循环（任务队列）中；
+    - 事件循环会不断的从任务队列中取出对应的事件（回调函数）来执行
+- 但是一次完整的事件循环Tick分成很多个阶段：
+    - `定时器（Timers）`：本阶段执行已经被 `setTimeout()` 和 `setInterval()`的调度回调函数。
+    - `待定回调（Pending Callback）`：对某些系统操作（如TCP错误类型）执行回调，比如TCP连接时接收到ECONNREFUSED
+    - `idle`, `prepare`：仅系统内部使用
+    - `轮询（Poll）`：检索新的 I/O 事件；执行与 I/O 相关的回调
+    - `检测（check）`：`setImmediate()` 回调函数在这里执行
+    - `关闭的回调函数`：一些关闭的回调函数，如：`socket.on('close', ...)`
+![Node事件循环](/image/06/Node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.png)
+
+#### Node的宏任务和微任务
+- 现从一次事件循环的Tick来说，Node的事件循环更复杂，它也分为微任务和宏任务：
+    - 宏任务（macrotask）：`setTimeout`、`setInterval`、`IO事件`、`setImmediate`、`close事件`
+    - 微任务（microtask）：`Promise的then回调`、`process.nextTick`、`queueMicrotask`
+- 但是，Node中的事件循环不只是 微任务队列和 宏任务队列：
+    - 微任务队列：
+        - next tick queue：`process.nextTick`
+        - other queue：`Promise的then回调`、`queueMicrotask`
+    - 宏任务队列：
+        - timer queue：`setTimeout`、`setInterval`
+        - poll queue：`IO事件`
+        - check queue：`setImmediate`
+        - close queue：`close事件`
+
+#### Node事件循环的顺序
+在每一次事件循环的tick中，会按照如下顺序来执行代码：
+1. next tick microtask queue
+2. other microtask queue
+3. timer queue
+4. poll queue
+5. check queue
+6. close queue
