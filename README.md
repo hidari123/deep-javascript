@@ -179,6 +179,14 @@
       - [Node事件循环的阶段](#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E7%9A%84%E9%98%B6%E6%AE%B5)
       - [Node的宏任务和微任务](#node%E7%9A%84%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%92%8C%E5%BE%AE%E4%BB%BB%E5%8A%A1)
       - [Node事件循环的顺序](#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E7%9A%84%E9%A1%BA%E5%BA%8F)
+  - [错误处理方案](#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88)
+    - [throw关键字](#throw%E5%85%B3%E9%94%AE%E5%AD%97)
+    - [Error类型](#error%E7%B1%BB%E5%9E%8B)
+    - [异常的处理](#%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86)
+    - [异常的捕获](#%E5%BC%82%E5%B8%B8%E7%9A%84%E6%8D%95%E8%8E%B7)
+  - [模块化](#%E6%A8%A1%E5%9D%97%E5%8C%96)
+    - [CommonJS规范和Node关系](#commonjs%E8%A7%84%E8%8C%83%E5%92%8Cnode%E5%85%B3%E7%B3%BB)
+    - [exports导出](#exports%E5%AF%BC%E5%87%BA)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
