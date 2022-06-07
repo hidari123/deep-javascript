@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-06 14:51:14
+ * @LastEditTime: 2022-06-07 16:53:04
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -4828,3 +4828,69 @@ Promise.resolve().then(() => {
 4. poll queue
 5. check queue
 6. close queue
+
+## 错误处理方案
+
+### throw关键字
+
+- `throw`表达式就是在`throw`后面可以跟上一个表达式来表示具体的异常信息：
+- `throw`关键字可以跟上：
+    - 基本数据类型：比如`number`、`string`、`Boolean`
+    - 对象类型：对象类型可以包含更多的信息
+
+### Error类型
+
+- Error包含三个属性：
+    - `messsage`：创建Error对象时传入的`message`
+    - `name`：Error的名称，通常和类的名称一致
+    - `stack`：整个Error的错误信息，包括函数的调用栈，当我们直接打印Error对象时，打印的就是`stack`
+- Error有一些自己的子类：
+    - RangeError：下标值越界时使用的错误类型
+    - SyntaxError：解析语法错误时使用的错误类型
+    - TypeError：出现类型错误时，使用的错误类型
+
+### 异常的处理
+
+- 一个函数抛出了异常，调用它的时候程序会被强制终止：这是因为如果我们在调用一个函数时，这个函数抛出了异常，但是我们并没有对这个异常进行处理，那么这个异常会继续传
+递到上一个函数调用中
+- 而如果到了最顶层（全局）的代码中依然没有对这个异常的处理代码，这个时候就会报错并且终止程序的运行
+
+### 异常的捕获
+
+- 在ES10（ES2019）中，`catch`后面绑定的`error`可以省略。
+- 如果有一些必须要执行的代码，我们可以使用`finally`来执行：
+    - `finally`表示最终一定会被执行的代码结构；
+    - 注意：如果`try`和`finally`中都有返回值，那么会使用`finally`当中的返回值
+
+## 模块化
+
+### CommonJS规范和Node关系
+- CommonJS是一个规范，最初提出来是在浏览器以外的地方使用，并且当时被命名为ServerJS，后来为了体现它的广泛性，修改为CommonJS，平时我们也会简称为CJS。
+    - Node是CommonJS在服务器端一个具有代表性的实现
+    - Browserify是CommonJS在浏览器中的一种实现
+    - webpack打包工具具备对CommonJS的支持和转换
+- 所以，Node中对CommonJS进行了支持和实现，让我们在开发node的过程中可以方便的进行模块化开发：
+    - 在Node中每一个js文件都是一个单独的模块
+    - 这个模块中包括CommonJS规范的核心变量：`exports`、`module.exports`、`require`
+    - 我们可以使用这些变量来方便的进行模块化开发
+- 模块化的核心是导出和导入，Node中对其进行了实现：
+    - `exports`和`module.exports`可以负责对模块中的内容进行导出
+    - `require`函数可以帮助我们导入其他模块（自定义模块、系统模块、第三方库模块）中的内容
+![node中commonjs的原理](/image/07/node%E4%B8%ADcommonjs%E7%9A%84%E5%8E%9F%E7%90%86.png)
+
+### exports导出
+
+**注意：**exports是一个对象，我们可以在这个对象中添加很多个属性，添加的属性会导出
+
+- `module.exports`和`exports`关系
+
+- 维基百科中对CommonJS规范的解析：
+    - CommonJS中是没有`module.exports`的概念的
+ - 但是为了实现模块的导出，Node中使用的是`Module`的类，每一个模块都是`Module`的一个实例，也就是`module`
+    - p所以在Node中真正用于导出的其实根本不是`exports`，而是`module.exports`
+    - 因为`module`才是导出的真正实现者
+- 为什么`exports`也可以导出呢？
+    - 这是因为`module`对象的`exports`属性是`exports`对象的一个引用
+    - 也就是说 `module.exports = exports = main`中的`bar`
+
+![esmodule和commonjs相互引入](/image/07/esmodule%E5%92%8Ccommonjs%E7%9B%B8%E4%BA%92%E5%BC%95%E5%85%A5.png)
