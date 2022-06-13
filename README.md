@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-13 15:15:36
+ * @LastEditTime: 2022-06-13 17:32:56
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -210,6 +210,25 @@
       - [局部命令的执行](#%E5%B1%80%E9%83%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E6%89%A7%E8%A1%8C)
     - [npm发布自己的包](#npm%E5%8F%91%E5%B8%83%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8C%85)
   - [JSON-数据存储](#json-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8)
+    - [JSON基本语法](#json%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95)
+    - [JSON序列化](#json%E5%BA%8F%E5%88%97%E5%8C%96)
+      - [Stringify的参数](#stringify%E7%9A%84%E5%8F%82%E6%95%B0)
+      - [parse方法](#parse%E6%96%B9%E6%B3%95)
+      - [使用JSON序列化深拷贝](#%E4%BD%BF%E7%94%A8json%E5%BA%8F%E5%88%97%E5%8C%96%E6%B7%B1%E6%8B%B7%E8%B4%9D)
+  - [Storage/indexedDB/cookie](#storageindexeddbcookie)
+    - [Storage](#storage)
+      - [localStorage和sessionStorage的区别](#localstorage%E5%92%8Csessionstorage%E7%9A%84%E5%8C%BA%E5%88%AB)
+      - [Storage常见的方法和属性](#storage%E5%B8%B8%E8%A7%81%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7)
+      - [封装Storage](#%E5%B0%81%E8%A3%85storage)
+    - [IndexedDB](#indexeddb)
+      - [IndexedDB的连接数据库](#indexeddb%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93)
+      - [IndexedDB的数据库操作](#indexeddb%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C)
+    - [Cookie](#cookie)
+      - [cookie常见的属性](#cookie%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B1%9E%E6%80%A7)
+      - [客户端设置cookie](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E7%BD%AEcookie)
+      - [cookie 缺点](#cookie-%E7%BC%BA%E7%82%B9)
+  - [BOM 和 DOM](#bom-%E5%92%8C-dom)
+    - [BOM](#bom)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -5242,3 +5261,343 @@ npm publish
     - 2. 重新发布
 
 ## JSON-数据存储
+
+- JSON的由来
+
+> JSON是一种非常重要的数据格式，全称是JavaScript Object Notation（JavaScript对象符号）
+
+- 其他的传输格式：
+    -  XML：在早期的网络传输中主要是使用XML来进行数据交换的，但是这种格式在解析、传输等各方面都弱于JSON，所以目前已经很少在被使用了；
+    -  Protobuf：另外一个在网络传输中目前已经越来越多使用的传输格式是protobuf，但是直到2021年的3.x版本才支持JavaScript，所以目前在前端使用的较少
+
+### JSON基本语法
+
+- JSON的顶层支持三种类型的值：
+1. 简单值：数字（`Number`）、字符串（`String`，不支持单引号）、布尔类型（`Boolean`）、`null`类型（不支持`undefined`）
+2. 对象值：由`key`、`value`组成，`key`是字符串类型，并且必须添加双引号，值可以是简单值、对象值、数组值
+3. 数组值：数组的值可以是简单值、对象值、数组值
+
+### JSON序列化
+
+- 某些情况下我们希望将JavaScript中的复杂类型转化成JSON格式的字符串，这样方便对其进行处理：
+    - 比如我们希望将一个对象保存到`localStorage`中
+    - 但是如果我们直接存放一个对象，这个对象会被转化成 `[object Object]` 格式的字符串，并不是我们想要的结果
+- 在ES5中引用了JSON全局对象，该对象有两个常用的方法：
+    - `stringify`方法：将JavaScript类型转成对应的JSON字符串
+    - `parse`方法：解析JSON字符串，转回对应的JavaScript类型
+
+#### Stringify的参数
+
+> `JSON.stringify()` 方法将一个 JavaScript 对象或值转换为 JSON 字符串：
+
+- Stringify的参数`replacer`
+    - 如果指定了一个 `replacer` 函数，则可以选择性地替换值
+    ```js
+    JSON.stringify(obj, (key,val) => val)
+    ```
+    - 如果指定的 `replacer` 是数组，则可选择性地仅包含数组指定的属性
+    ```js
+    JSON.stringify(obj, ['name', 'age'])
+    ```
+- Stringify的参数`space`
+    - 格式化JSON，前面拼接上第三个参数的内容
+    ```js
+    JSON.stringify(obj, null , '---')
+    ```
+- 如果对象本身包含`toJSON`方法，那么会直接使用`toJSON`方法的结果
+
+#### parse方法
+
+> `JSON.parse()` 方法用来解析JSON字符串，构造由字符串描述的JavaScript值或对象
+
+- 提供可选的 `reviver` 函数用以在返回之前对所得到的对象执行变换(操作)
+
+#### 使用JSON序列化深拷贝
+
+- `JSON.stringify()` 生成的新对象和之前的对象并不是同一个对象
+    - 相当于是进行了一次深拷贝
+- 这种方法对函数无能为力
+    - 因为`stringify`并不会对函数进行处理
+
+## Storage/indexedDB/cookie
+### Storage
+
+- WebStorage主要提供了一种机制，可以让浏览器提供一种比`cookie`更直观的`key`、`value`存储方式：
+- `localStorage`：本地存储，提供的是一种永久性的存储方法，在关闭掉网页重新打开时，存储的内容依然保留；
+- `sessionStorage`：会话存储，提供的是本次会话的存储，在关闭掉会话时，存储的内容会被清除
+
+#### localStorage和sessionStorage的区别
+
+- 验证一：关闭网页后重新打开，`localStorage`会保留，而`sessionStorage`会被删除
+- 验证二：在页面内实现跳转，`localStorage`会保留，`sessionStorage`也会保留
+- 验证三：在页面外实现跳转（打开新的网页），`localStorage`会保留，`sessionStorage`不会被保留
+
+#### Storage常见的方法和属性
+- 属性：
+    - `Storage.length`：只读属性
+        - 返回一个整数，表示存储在Storage对象中的数据项数量
+- 方法：
+    - `Storage.key()`：该方法接受一个数值`n`作为参数，返回存储中的第n个`key`名称
+    - `Storage.getItem()`：该方法接受一个`key`作为参数，并且返回`key`对应的value
+    - `Storage.setItem()`：该方法接受一个`key`和`value`，并且将会把`key`和`value`添加到存储中
+        - 如果`key`存储，则更新其对应的值
+    - `Storage.removeItem()`：该方法接受一个`key`作为参数，并把该`key`从存储中删除
+    - `Storage.clear()`：该方法的作用是清空存储中的所有`key`
+
+#### 封装Storage
+```js
+class HYCache {
+  constructor(isLocal = true) {
+    this.storage = isLocal ? localStorage: sessionStorage
+  }
+
+  setItem(key, value) {
+    if (value) {
+      this.storage.setItem(key, JSON.stringify(value))
+    }
+  }
+
+  getItem(key) {
+    let value = this.storage.getItem(key)
+    if (value) {
+      value = JSON.parse(value)
+      return value
+    } 
+  }
+
+  removeItem(key) {
+    this.storage.removeItem(key)
+  }
+
+  clear() {
+    this.storage.clear()
+  }
+
+  key(index) {
+    return this.storage.key(index)
+  }
+
+  length() {
+    return this.storage.length
+  }
+}
+
+const localCache = new HYCache()
+const sessionCache = new HYCache(false)
+
+export {
+  localCache,
+  sessionCache
+}
+```
+
+### IndexedDB
+- 什么是`IndexedDB`呢？
+    - DB这个词，说明它其实是一种数据库（Database），通常情况下在服务器端比较常见
+    - 在实际的开发中，大量的数据都是存储在数据库的，客户端主要是请求这些数据并且展示
+    - 有时候我们可能会存储一些简单的数据到本地（浏览器中），比如token、用户名、密码、用户信息等，比较少存储大量的数据
+    - 那么如果确实有**大量**的数据需要存储，这个时候可以选择使用`IndexedDB`
+- `IndexedDB`是一种**底层的**API，用于在客户端存储大量的结构化数据。
+    - 它是一种事务型数据库系统，是一种基于JavaScript面向对象数据库，有点类似于NoSQL（非关系型数据库）
+    - IndexDB本身就是基于事务的，我们只需要指定数据库模式，打开与数据库的连接，然后检索和更新一系列事务即可
+
+#### IndexedDB的连接数据库
+- 第一步：打开IndexedDB的某一个数据库
+    - 通过`IndexedDB.open(数据库名称, 数据库版本)`方法
+    - 如果数据库不存在，那么会创建这个数据
+    - 如果数据库已经存在，那么会打开这个数据库
+- 第二步：通过监听回调得到数据库连接结果
+    - 数据库的`open`方法会得到一个`IDBOpenDBRequest`类型
+    - 我们可以通过下面的三个回调来确定结果：
+        - `onerror`：当数据库连接失败时
+        - `onsuccess`：当数据库连接成功时回调
+        - `onupgradeneeded`：当数据库的version发生变化并且高于之前版本时回调
+            - 通常我们在这里会创建具体的存储对象：`db.createObjectStore(存储对象名称, { keypath: 存储的主键 })`
+    - 我们可以通过`onsuccess`回调的`event`获取到db对象：`event.target.result`
+
+#### IndexedDB的数据库操作
+- 我们对数据库的操作要通过事务对象来完成：
+    - 第一步：通过db获取对应存储的事务 `db.transaction(存储名称, 可写操作)`
+    - 第二步：通过事务获取对应的存储对象 `transaction.objectStore(存储名称)`
+- 增删改查操作：
+    - 新增数据 `store.add`
+    - 查询数据
+        - 方式一：`store.get(key)`
+        - 方式二：通过 `store.openCursor` 拿到游标对象
+            - 在`request.onsuccess`中获取`cursor：event.target.result`
+            - 获取对应的`key：cursor.key`
+            - 获取对应的`value：cursor.value`
+            - 可以通过`cursor.continue`来继续执行
+    - 修改数据 `cursor.update(value)`
+    - 删除数据 `cursor.delete()`
+
+```js
+// 打开数据(和数据库建立连接)
+const dbRequest = indexedDB.open("why", 3)
+dbRequest.onerror = function(err) {
+  console.log("打开数据库失败~")
+}
+let db = null
+dbRequest.onsuccess = function(event) {
+  db = event.target.result
+}
+// 第一次打开/或者版本发生升级
+dbRequest.onupgradeneeded = function(event) {
+  const db = event.target.result
+
+  console.log(db)
+
+  // 创建一些存储对象
+  // keyPath => 表的主键
+  db.createObjectStore("users", { keyPath: "id" })
+}
+
+class User {
+  constructor(id, name, age) {
+    this.id = id
+    this.name = name
+    this.age = age
+  }
+}
+
+const users = [
+  new User(100, "why", 18),
+  new User(101, "kobe", 40),
+  new User(102, "james", 30),
+]
+
+// 获取btns, 监听点击
+const btns = document.querySelectorAll("button")
+for (let i = 0; i < btns.length; i++) {
+  btns[i].onclick = function() {
+    const transaction = db.transaction("users", "readwrite")
+    console.log(transaction)
+    const store = transaction.objectStore("users")
+
+    switch(i) {
+      case 0:
+        console.log("点击了新增")
+        for (const user of users) {
+          const request = store.add(user)
+          request.onsuccess = function() {
+            console.log(`${user.name}插入成功`)
+          }
+        }
+        transaction.oncomplete = function() {
+          console.log("添加操作全部完成")
+        }
+        break
+      case 1:
+        console.log("点击了查询")
+
+        // 1.查询方式一(知道主键, 根据主键查询)
+        // const request = store.get(102)
+        // request.onsuccess = function(event) {
+        //   console.log(event.target.result)
+        // }
+
+        // 2.查询方式二:
+        const request = store.openCursor()
+        request.onsuccess = function(event) {
+          const cursor = event.target.result
+          if (cursor) {
+            if (cursor.key === 101) {
+              console.log(cursor.key, cursor.value)
+            } else {
+              cursor.continue()
+            }
+          } else {
+            console.log("查询完成")
+          }
+        }
+        break
+      case 2:
+        console.log("点击了删除")
+        const deleteRequest = store.openCursor()
+        deleteRequest.onsuccess = function(event) {
+          const cursor = event.target.result
+          if (cursor) {
+            if (cursor.key === 101) {
+              cursor.delete()
+            } else {
+              cursor.continue()
+            }
+          } else {
+            console.log("查询完成")
+          }
+        }
+        break
+      case 3:
+        console.log("点击了修改")
+        const updateRequest = store.openCursor()
+        updateRequest.onsuccess = function(event) {
+          const cursor = event.target.result
+          if (cursor) {
+            if (cursor.key === 101) {
+              const value = cursor.value;
+              value.name = "curry"
+              cursor.update(value)
+            } else {
+              cursor.continue()
+            }
+          } else {
+            console.log("查询完成")
+          }
+        }
+        break
+    }
+  }
+}
+```
+
+### Cookie
+
+> Cookie（复数形态Cookies），类型为“小型文本文件，某些网站为了辨别用户身份而存储在用户本地终端（Client Side）上的数据。
+> 浏览器会在特定的情况下携带上cookie来发送请求，我们可以通过cookie来获取一些信息
+- Cookie总是保存在客户端中，按在客户端中的存储位置，Cookie可以分为内存Cookie和硬盘Cookie。
+    - 内存Cookie由浏览器维护，保存在内存中，浏览器关闭时Cookie就会消失，其存在时间是短暂的
+    - 硬盘Cookie保存在硬盘中，有一个过期时间，用户手动清理或者过期时间到时，才会被清理
+- 如果判断一个cookie是内存cookie还是硬盘cookie呢？
+    - 没有设置过期时间，默认情况下cookie是**内存cookie**，在关闭浏览器时会自动删除
+    - 有设置过期时间，并且过期时间不为0或者负数的cookie，是**硬盘cookie**，需要手动或者到期时，才会删除
+
+#### cookie常见的属性
+
+- cookie的生命周期：
+    - 默认情况下的cookie是**内存cookie**，也称之为**会话cookie**，也就是在浏览器关闭时会自动被删除
+    - 我们可以通过设置`expires`或者`max-age`来设置过期的时间
+        - `expires`：设置的是`Date.toUTCString()`，设置格式是`;expires=date-in-GMTString-format`
+        - `max-age`：设置过期的秒钟 `;max-age=max-age-in-seconds` (例如一年为60*60*24*365)
+- cookie的作用域：（允许cookie发送给哪些URL）
+- Domain：指定哪些主机可以接受cookie
+    - 如果不指定，那么默认是 `origin`，不包括子域名。
+    - 如果指定Domain，则包含子域名。例如，如果设置 `Domain=mozilla.org`，则 Cookie 也包含在子域名中（如`developer.mozilla.org`）。
+- Path：指定主机下哪些路径可以接受cookie
+    - 例如，设置 `Path=/docs`，则以下地址都会匹配：
+        - `/docs`
+        - `/docs/Web/`
+        - `/docs/Web/HTTP`
+
+#### 客户端设置cookie
+
+- js直接设置和获取cookie：
+```js
+console.log(document.cookie)
+```
+- 这个cookie会在会话关闭时被删除掉
+    - 设置过期时间就是本地cookie，未设置就是内存cookie
+
+- 设置cookie，同时设置过期时间（默认单位是秒钟）
+```js
+document.cookie = 'name=hidari;max-age=10'
+```
+
+#### cookie 缺点
+1. 将 cookie 附加到每次http请求中
+2. 明文传输，存在安全风险
+3. 有大小限制（4kb）
+4. 客户端cookie浏览器自动添加 => 服务器，ios，安卓，小程序 => 需要手动添加 cookie
+
+## BOM 和 DOM
+
+### BOM
