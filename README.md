@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-07 16:53:04
+ * @LastEditTime: 2022-06-13 15:15:36
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -187,6 +187,29 @@
   - [模块化](#%E6%A8%A1%E5%9D%97%E5%8C%96)
     - [CommonJS规范和Node关系](#commonjs%E8%A7%84%E8%8C%83%E5%92%8Cnode%E5%85%B3%E7%B3%BB)
     - [exports导出](#exports%E5%AF%BC%E5%87%BA)
+    - [require细节](#require%E7%BB%86%E8%8A%82)
+    - [模块的加载过程](#%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B)
+    - [CommonJS规范缺点](#commonjs%E8%A7%84%E8%8C%83%E7%BC%BA%E7%82%B9)
+    - [AMD规范](#amd%E8%A7%84%E8%8C%83)
+      - [require.js的使用](#requirejs%E7%9A%84%E4%BD%BF%E7%94%A8)
+    - [CMD规范](#cmd%E8%A7%84%E8%8C%83)
+      - [SeaJS的使用](#seajs%E7%9A%84%E4%BD%BF%E7%94%A8)
+    - [ES Module](#es-module)
+      - [import meta](#import-meta)
+      - [ES Module的解析流程](#es-module%E7%9A%84%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B)
+  - [包管理工具详解 npm、yarn、cnpm、npx](#%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E8%AF%A6%E8%A7%A3-npmyarncnpmnpx)
+    - [npm](#npm)
+      - [常见的属性](#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B1%9E%E6%80%A7)
+      - [npm install](#npm-install)
+        - [npm install 原理](#npm-install-%E5%8E%9F%E7%90%86)
+      - [package-lock.json](#package-lockjson)
+      - [npm其他命令](#npm%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4)
+    - [yarn工具](#yarn%E5%B7%A5%E5%85%B7)
+    - [cnpm工具](#cnpm%E5%B7%A5%E5%85%B7)
+    - [npx工具](#npx%E5%B7%A5%E5%85%B7)
+      - [局部命令的执行](#%E5%B1%80%E9%83%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E6%89%A7%E8%A1%8C)
+    - [npm发布自己的包](#npm%E5%8F%91%E5%B8%83%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8C%85)
+  - [JSON-数据存储](#json-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -4902,3 +4925,320 @@ Promise.resolve().then(() => {
     - 也就是说 `module.exports = exports = main`中的`bar`
 
 ![esmodule和commonjs相互引入](/image/07/esmodule%E5%92%8Ccommonjs%E7%9B%B8%E4%BA%92%E5%BC%95%E5%85%A5.png)
+
+### require细节
+
+> `require`是一个函数，可以帮助我们引入一个文件（模块）中导出的对象
+
+> `require`的查找规则 https://nodejs.org/dist/latest-v14.x/docs/api/modules.html
+
+- 导入格式如下：`require(X)`
+
+- 情况一：`X`是一个Node核心模块，比如`path`、`http`
+    - 直接返回核心模块，并且停止查找
+- 情况二：`X`是以 `./` 或 `../` 或 `/（根目录）`开头的
+    - 第一步：将`X`当做一个文件在对应的目录下查找
+        - 1. 如果有后缀名，按照后缀名的格式查找对应的文件
+        - 2. 如果没有后缀名，会按照如下顺序
+            - 1. 直接查找文件`X`
+            - 2. 查找`X.js`文件
+            - 3. 查找`X.json`文件
+            - 4. 查找`X.node`文件
+    - 第二步：没有找到对应的文件，将X作为一个目录
+        - 查找目录下面的`index`文件
+            - 1. 查找`X/index.js`文件
+            - 2. 查找`X/index.json`文件
+            - 3. 查找`X/index.node`文件
+        - 如果没有找到，那么报错：`not found`
+    - 情况三：直接是一个X（没有路径），并且X不是一个核心模块
+        - 逐层向上查找
+        - 如果上面的路径中都没有找到，那么报错：`not found`
+
+### 模块的加载过程
+
+- 结论一：模块在被第一次引入时，模块中的js代码会被运行一次
+- 结论二：模块被多次引入时，会缓存，最终只加载（运行）一次
+    - 因为每个模块对象`module`都有一个属性：`loaded`
+    - 为`false`表示还没有加载，为`true`表示已经加载
+- 结论三：如果有循环引入，那么加载顺序是图结构
+    - 图结构在遍历的过程中，有`深度优先搜索（DFS, depth first search）`和`广度优先搜索（BFS, breadth first search）`
+    - Node采用的是深度优先算法
+
+### CommonJS规范缺点
+
+CommonJS加载模块是同步的：
+- 同步的意味着只有等到对应的模块加载完毕，当前模块中的内容才能被运行
+- 这个在服务器不会有什么问题，因为服务器加载的js文件都是本地文件，加载速度非常快
+
+如果将它应用于浏览器呢？
+- 浏览器加载js文件需要先从服务器将文件下载下来，之后再加载运行
+- 那么采用同步的就意味着后续的js代码都无法正常运行，即使是一些简单的DOM操作
+
+所以在浏览器中，我们通常不使用CommonJS规范
+- 在webpack中使用CommonJS，会将我们的代码转成浏览器可以直接执行的代码
+
+- 在早期为了可以在浏览器中使用模块化，通常会采用`AMD`或`CMD`
+    - 前一方面现代的浏览器已经支持ES Modules，另一方面借助于webpack等工具可以实现对CommonJS或者ES Module代码的转换
+    - AMD和CMD目前使用非常少
+
+### AMD规范
+
+- AMD主要是应用于浏览器的一种模块化规范
+    - AMD是Asynchronous Module Definition（异步模块定义）的缩写
+    - 采用的是异步加载模块
+    - 上AMD的规范还要早于CommonJS，但是CommonJS目前依然在被使用，而AMD使用的较少了
+- 规范只是定义代码的应该如何去编写
+    - AMD实现的比较常用的库是`require.js`和`curl.js`
+
+#### require.js的使用
+
+- 第一步：下载`require.js`
+    - 下载地址：https://github.com/requirejs/requirejs
+    - 找到其中的`require.js`文件
+- 第二步：定义HTML的script标签引入require.js和定义入口文件：
+    - data-main属性的作用是在加载完src的文件后会加载执行该文件
+    ```html
+    <script src="./lib/require.js" data-main="./index.js"></script>
+    ```
+
+### CMD规范
+
+- CMD规范也是应用于浏览器的一种模块化规范：
+    - CMD 是Common Module Definition（通用模块定义）的缩写
+    - 它也采用了异步加载模块，但是它将CommonJS的优点吸收了过来
+    - 但是目前CMD使用也非常少了
+- CMD也有自己比较优秀的实现方案：
+    - SeaJS
+
+#### SeaJS的使用
+
+- 第一步：下载`SeaJS`
+    - 下载地址：https://github.com/seajs/seajs
+    - 找到dist文件夹下的`sea.js`
+- 第二步：引入`sea.js`和使用主入口文件
+    - `seajs`是指定主入口文件的
+
+### ES Module
+
+> 采用ES Module将自动采用严格模式：`use strict`
+
+#### import meta
+- `import.meta`是一个给JavaScript模块暴露特定上下文的元数据属性的对象。
+    - 它包含了这个模块的信息，比如说这个模块的URL
+    - 在ES11（ES2020）中新增的特性
+
+#### ES Module的解析流程
+
+- ES Module是如何被浏览器解析并且让模块之间可以相互引用的呢？
+    - https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/
+- ES Module的解析过程可以划分为三个阶段：
+    - 阶段一：构建（Construction），根据地址查找js文件，并且下载，将其解析成模块记录（Module Record）；
+    - 阶段二：实例化（Instantiation），对模块记录进行实例化，并且分配内存空间，解析模块的导入和导出语句，把模块指向对应的内存地址。
+    - 阶段三：运行（Evaluation），运行代码，计算值，并且将值填充到内存地址中
+
+
+
+## 包管理工具详解 npm、yarn、cnpm、npx
+
+### npm
+
+- 每一个项目都会有一个对应的配置文件`package.json`(`npm init –y`)
+    - 这个配置文件会记录着你项目的名称、版本号、项目描述等
+    - 也会记录着你项目所依赖的其他库的信息和依赖库的版本号
+
+- 安装的依赖版本出现：^2.0.3或~2.0.3，这是什么意思呢？
+    - npm的包通常需要遵从semver版本规范：
+        - semver：https://semver.org/lang/zh-CN/
+        - npm semver：https://docs.npmjs.com/misc/semver
+    - semver版本规范是X.Y.Z：
+        - X主版本号（major）：当你做了不兼容的 API 修改（可能不兼容之前的版本）
+        - Y次版本号（minor）：当你做了向下兼容的功能性新增（新功能增加，但是兼容之前的版本）
+        - Z修订号（patch）：当你做了向下兼容的问题修正（没有新功能，修复了之前版本的bug）
+    - ^和~的区别：
+        - ^x.y.z：表示x是保持不变的，y和z永远安装最新的版本
+        - ~x.y.z：表示x和y保持不变的，z永远安装最新的版本
+
+#### 常见的属性
+- **必须填写的属性：`name`、`version`**
+    - `name`是项目的名称
+    - `version`是当前项目的版本号
+    - `description`是描述信息，很多时候是作为项目的基本描述
+    - `author`是作者相关信息（发布时用到）
+    - `license`是开源协议（发布时用到）
+- `private`属性：
+    - `private`属性记录当前的项目是否是私有的
+    - 当值为`true`时，npm是不能发布它的，这是防止私有项目或模块发布出去的方式
+- `main`属性：
+    - 设置程序的入口。
+    - 在发布一个模块的时候会用到
+    - 比如我们使用`axios`模块 `const axios = require('axios')`
+    - 实际上是找到对应的`main`属性查找文件的
+- `scripts`属性
+    - `scripts`属性用于配置一些脚本命令，以键值对的形式存在；
+    - 配置后我们可以通过 `npm run` 命令的key来执行这个命令；
+    - `npm start`和`npm run start`是等价的
+        - 对于常用的 `start`、 `test`、`stop`、`restart`可以省略掉`run`直接通过 `npm start`等方式运行；
+- `dependencies`属性
+    - `dependencies`属性是指定无论开发环境还是生成环境都需要依赖的包
+    - 通常是我们项目实际开发用到的一些库模块`vue`、`vuex`、`vue-router`、`react`、`react-dom`、`axios`等等
+- `devDependencies`属性
+    - 一些包在生成环境是不需要的，比如`webpack`、`babel`等；
+    - 这个时候我们会通过 `npm install webpack --save-dev`，将它安装到`devDependencies`属性中
+- `peerDependencies`属性
+    - 还有一种项目依赖关系是对等依赖，也就是你依赖的一个包，它必须是以另外一个宿主包为前提的
+    - 比如`element-plus`是依赖于`vue3`的，`ant design`是依赖于`react`、`react-dom`
+- `engines`属性
+    - `engines`属性用于指定Node和NPM的版本号
+    - 在安装的过程中，会先检查对应的引擎版本，如果不符合就会报错
+    - 事实上也可以指定所在的操作系统 `"os" : [ "darwin", "linux" ]`，只是很少用到
+- `browserslist`属性
+    - 用于配置打包后的JavaScript浏览器的兼容情况，参考
+    - 否则我们需要手动的添加`polyfills`来让支持某些语法
+    - 也就是说它是为webpack等打包工具服务的一个属性
+
+#### npm install
+
+- 安装npm包分两种情况：
+    - 全局安装（global install）： `npm install webpack -g`
+    - 项目（局部）安装（local install）： `npm install webpack`
+- 全局安装
+    - 全局安装是直接将某个包安装到全局：
+    - 比如yarn的全局安装：
+    - 但是很多人对全局安装有一些误会：
+        - 通常使用npm全局安装的包都是一些工具包：yarn、webpack等
+        - 并不是类似于 axios、express、koa等库文件
+        - 所以全局安装了之后并不能让我们在所有的项目中使用 axios等库
+- 局部安装分为开发时依赖和生产时依赖：
+```shell
+# 安装开发和生产依赖
+npm install axios
+npm i axios
+# 开发依赖
+npm install webpack --save-dev
+npm install webpack -D
+npm i webpack –D
+# 根据package.json中的依赖包
+npm install
+```
+
+##### npm install 原理
+![npm install 原理](/image/08/npm%20install%20%E5%8E%9F%E7%90%86.PNG)
+
+- `npm install`会检测是有`package-lock.json`文件：
+    - 没有lock文件
+       - 分析依赖关系，这是因为我们可能包会依赖其他的包，并且多个包之间会产生相同依赖的情况
+        - 从`registry`仓库中下载压缩包（如果我们设置了镜像，那么会从镜像服务器下载压缩包）
+        - 获取到压缩包后会对压缩包进行缓存（从npm5开始有的）
+        - 将压缩包解压到项目的`node_modules`文件夹中（前面我们讲过，require的查找顺序会在该包下面查找）
+    - 有lock文件
+        - 检测lock中包的版本是否和`package.json`中一致（会按照semver版本规范检测）
+            - 不一致，那么会重新构建依赖关系，直接会走顶层的流程
+            - 一致的情况下，会去优先查找缓存
+                - 没有找到，会从`registry`仓库下载，直接走顶层流程
+                - 查找到，会获取缓存中的压缩文件，并且将压缩文件解压到`node_modules`文件夹中
+
+#### package-lock.json
+
+- `package-lock.json`文件解析：
+- `name`：项目的名称
+- `version`：项目的版本
+- l`ockfileVersion`：lock文件的版本
+- `requires`：使用requires来跟踪模块的依赖关系
+- `dependencies`：项目的依赖
+    - 当前项目依赖axios，但是axios依赖`follow-redireacts`
+    - `axios`中的属性如下：
+    - `version`表示实际安装的axios的版本
+    - `resolved`用来记录下载的地址，`registry`仓库中的位置
+    - `requires`记录当前模块的依赖
+    - `integrity`用来从缓存中获取索引，再通过索引去获取压缩包文件
+
+#### npm其他命令
+
+> https://docs.npmjs.com/cli/v8/commands
+
+- 卸载某个依赖包：
+```shell
+npm uninstall package
+npm uninstall package --save-dev
+npm uninstall package -D
+```
+- 强制重新build
+```shell
+npm rebuild
+```
+- 清除缓存
+```shell
+npm cache clean
+```
+
+### yarn工具
+
+> yarn是由Facebook、Google、Exponent 和 Tilde 联合推出了一个新的 JS 包管理工具，为了弥补 npm 的一些缺陷而出现
+
+### cnpm工具
+- 查看npm镜像：
+```shell
+npm config get registry # npm config get registry
+```
+
+- 直接设置npm的镜像：
+```shell
+npm config set registry https://registry.npm.taobao.org
+```
+
+- 如果并不希望将npm镜像修改
+    - 可以使用cnpm，并且将cnpm设置为淘宝的镜像：
+```shell
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+cnpm config get registry # https://r.npm.taobao.org/
+```
+
+### npx工具
+
+- npx是npm5.2之后自带的一个命令。
+    - npx的作用非常多，但是比较常见的是使用它来调用项目中的某个模块的指令
+- 以webpack为例：
+    - 全局安装的是webpack5.1.3
+    - 项目安装的是webpack3.6.0
+- 如果在终端执行 `webpack --version`
+    - 显示结果会是 webpack 5.1.3，事实上使用的是全局的
+    - 原因：在当前目录下找不到webpack时，就会去全局找，并且执行命令
+
+#### 局部命令的执行
+- 如何使用项目（局部）的webpack，常见的是两种方式：
+    - 方式一：明确查找到node_module下面的webpack
+    - 方式二：在 scripts定义脚本，来执行webpack
+- 方式一：在终端中使用如下命令（在项目根目录下）
+```shell
+./node_modules/.bin/webpack --version
+```
+- 方式二：修改package.json中的scripts
+```json
+"scripts": {
+"webpack": "webpack --version"
+}
+```
+- 方式三：使用npx
+```shell
+npx webpack --version
+```
+- npx的原理非常简单，它会到当前目录的node_modules/.bin目录下查找对应的命令
+
+### npm发布自己的包
+- 注册npm账号：
+    - https://www.npmjs.com/
+    - 选择`sign up`
+- 在命令行登录：
+```shell
+npm login
+```
+- 修改`package.json`
+- 发布到`npm registry`上
+```shell
+npm publish
+```
+- 更新仓库：
+    - 1. 修改版本号(最好符合semver规范)
+    - 2. 重新发布
+
+## JSON-数据存储
