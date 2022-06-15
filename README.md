@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-14 10:53:20
+ * @LastEditTime: 2022-06-15 17:04:32
  * @FilePath: \deepJavaScript\README.md
  * @Description: 深入JavaScript
  * 
@@ -239,6 +239,11 @@
   - [事件监听](#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC)
     - [事件流](#%E4%BA%8B%E4%BB%B6%E6%B5%81)
     - [事件对象event](#%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1event)
+  - [防抖和节流](#%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81)
+    - [防抖 debounce 函数](#%E9%98%B2%E6%8A%96-debounce-%E5%87%BD%E6%95%B0)
+    - [节流throttle函数](#%E8%8A%82%E6%B5%81throttle%E5%87%BD%E6%95%B0)
+  - [深拷贝函数](#%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%87%BD%E6%95%B0)
+  - [自定义事件总线](#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BA%8B%E4%BB%B6%E6%80%BB%E7%BA%BF)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -5910,3 +5915,226 @@ Capture）
     - `preventDefault`：取消事件的默认行为；
     - `stopPropagation`：阻止事件的进一步传递；
 - 事件类型：https://developer.mozilla.org/zh-CN/docs/Web/Events
+
+## 防抖和节流
+
+### 防抖 debounce 函数
+
+思路:
+1. 防抖基本功能实现：可以实现防抖效果
+2. 优化一：优化参数和this指向
+3. 优化二：优化取消操作（增加取消功能）
+4. 优化三：优化立即执行效果（第一次立即执行）
+5. 优化四：优化返回值
+
+```js
+function debounce(fn, delay, immediate = false, resultCallback) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null
+  let isInvoke = false
+
+  // 2.真正执行的函数
+  const _debounce = function(...args) {
+    return new Promise((resolve, reject) => {
+      // 取消上一次的定时器
+      if (timer) clearTimeout(timer)
+
+      // 判断是否需要立即执行
+      if (immediate && !isInvoke) {
+        const result = fn.apply(this, args)
+        if (resultCallback) resultCallback(result)
+        resolve(result)
+        isInvoke = true
+      } else {
+        // 延迟执行
+        timer = setTimeout(() => {
+          // 外部传入的真正要执行的函数
+          const result = fn.apply(this, args)
+          if (resultCallback) resultCallback(result)
+          resolve(result)
+          isInvoke = false
+          timer = null
+        }, delay)
+      }
+    })
+  }
+
+  // 封装取消功能
+  _debounce.cancel = function() {
+    if (timer) clearTimeout(timer)
+    timer = null
+    isInvoke = false
+  }
+
+  return _debounce
+}
+```
+
+### 节流throttle函数
+
+1. 节流函数的基本实现：可以实现节流效果
+2. 优化一：节流最后一次也可以执行
+3. 优化二：优化添加取消功能
+4. 优化三：优化返回值问题
+
+```js
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing, resultCallback } = options
+  let lastTime = 0
+  let timer = null
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function(...args) {
+    return new Promise((resolve, reject) => {
+      // 2.1.获取当前事件触发时的时间
+      const nowTime = new Date().getTime()
+      if (!lastTime && !leading) lastTime = nowTime
+
+      // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+      const remainTime = interval - (nowTime - lastTime)
+      if (remainTime <= 0) {
+        if (timer) {
+          clearTimeout(timer)
+          timer = null
+        }
+
+        // 2.3.真正触发函数
+        const result = fn.apply(this, args)
+        if (resultCallback) resultCallback(result)
+        resolve(result)
+        // 2.4.保留上次触发的时间
+        lastTime = nowTime
+        return
+      }
+
+      if (trailing && !timer) {
+        timer = setTimeout(() => {
+          timer = null
+          lastTime = !leading ? 0: new Date().getTime()
+          const result = fn.apply(this, args)
+          if (resultCallback) resultCallback(result)
+          resolve(result)
+        }, remainTime)
+      }
+    })
+  }
+
+  _throttle.cancel = function() {
+    if(timer) clearTimeout(timer)
+    timer = null
+    lastTime = 0
+  }
+
+  return _throttle
+}
+```
+
+## 深拷贝函数
+1. 自定义深拷贝的基本功能；
+2. 对Symbol的key进行处理；
+3. 其他数据类型的值进程处理：数组、函数、Symbol、Set、Map；
+4. 对循环引用的处理
+
+```js
+function isObject(value) {
+  const valueType = typeof value
+  return (value !== null) && (valueType === "object" || valueType === "function")
+}
+
+
+
+function deepClone(originValue, map = new WeakMap()) {
+  // 判断是否是一个Set类型
+  if (originValue instanceof Set) {
+    return new Set([...originValue])
+  }
+
+  // 判断是否是一个Map类型
+  if (originValue instanceof Map) {
+    return new Map([...originValue])
+  }
+
+  // 判断如果是Symbol的value, 那么创建一个新的Symbol
+  if (typeof originValue === "symbol") {
+    return Symbol(originValue.description)
+  }
+
+  // 判断如果是函数类型, 那么直接使用同一个函数
+  if (typeof originValue === "function") {
+    return originValue
+  }
+
+  // 判断传入的originValue是否是一个对象类型
+  if (!isObject(originValue)) {
+    return originValue
+  }
+  if (map.has(originValue)) {
+    return map.get(originValue)
+  }
+
+  // 判断传入的对象是数组, 还是对象
+  const newObject = Array.isArray(originValue) ? []: {}
+  map.set(originValue, newObject)
+  for (const key in originValue) {
+    newObject[key] = deepClone(originValue[key], map)
+  }
+
+  // 对Symbol的key进行特殊的处理
+  const symbolKeys = Object.getOwnPropertySymbols(originValue)
+  for (const sKey of symbolKeys) {
+    // const newSKey = Symbol(sKey.description)
+    newObject[sKey] = deepClone(originValue[sKey], map)
+  }
+  
+  return newObject
+}
+```
+
+## 自定义事件总线
+
+- 自定义事件总线属于一种观察者模式，其中包括三个角色：
+    - 发布者（Publisher）：发出事件（Event）
+    - 订阅者（Subscriber）：订阅事件（Event），并且会进行响应（Handler）
+    - 事件总线（EventBus）：无论是发布者还是订阅者都是通过事件总线作为中台的
+
+```js
+class HYEventBus {
+  constructor() {
+    this.eventBus = {}
+  }
+
+  on(eventName, eventCallback, thisArg) {
+    let handlers = this.eventBus[eventName]
+    if (!handlers) {
+      handlers = []
+      this.eventBus[eventName] = handlers
+    }
+    handlers.push({
+      eventCallback,
+      thisArg
+    })
+  }
+
+  off(eventName, eventCallback) {
+    const handlers = this.eventBus[eventName]
+    if (!handlers) return
+    const newHandlers = [...handlers]
+    for (let i = 0; i < newHandlers.length; i++) {
+      const handler = newHandlers[i]
+      if (handler.eventCallback === eventCallback) {
+        const index = handlers.indexOf(handler)
+        handlers.splice(index, 1)
+      }
+    }
+  }
+
+  emit(eventName, ...payload) {
+    const handlers = this.eventBus[eventName]
+    if (!handlers) return
+    handlers.forEach(handler => {
+      handler.eventCallback.apply(handler.thisArg, payload)
+    })
+  }
+}
+```
