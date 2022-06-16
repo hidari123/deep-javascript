@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-16 12:11:20
+ * @LastEditTime: 2022-06-16 13:35:41
  * @FilePath: \deepJavaScript\js高级语法.md
  * @Description: 深入JavaScript
  * 
@@ -105,6 +105,7 @@
       - [Set的常见方法](#set%E7%9A%84%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95)
       - [WeakSet使用](#weakset%E4%BD%BF%E7%94%A8)
       - [Map的基本使用](#map%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+      - [map 和 set 的区别](#map-%E5%92%8C-set-%E7%9A%84%E5%8C%BA%E5%88%AB)
       - [WeakMap的使用](#weakmap%E7%9A%84%E4%BD%BF%E7%94%A8)
     - [ES7](#es7)
       - [Array Includes](#array-includes)
@@ -2622,15 +2623,99 @@ console.log(sa === sc)
 ```
 
 #### Set的常见方法
+
+> `Set` 对象允许你存储任何类型的值，无论是原始值或者是对象引用。它类似于数组，但是成员的值都是唯一的，没有重复的值。
+> `Set` 本身是一个构造函数，用来生成Set 数据结构。Set函数可以接受一个数组（或者具有 `iterable` 接口的其他数据结构）作为参数，用来初始化。
+
+- Set中的特殊值:
+    - `Set` 对象存储的值总是唯一的，所以需要判断两个值是否恒等。有几个特殊值需要特殊对待：
+    1.  `+0` 与 `-0` 在存储判断唯一性的时候是恒等的，所以**不重复添加**
+    2. `undefined` 与 `undefined` 是恒等的，所以**不重复添加**
+    3. `NaN` 与 `NaN` 是不恒等的，但是在 Set 中认为NaN与NaN相等，所有只能存在一个，**不重复添加**
+    4. `{}` `{}` 两个空对象的指针不一样，所以会**重复添加**
 - Set常见的属性：
-    - size：返回Set中元素的个数
+    - `size`：返回Set中元素的个数
 - Set常用的方法：
-    - add(value)：添加某个元素，返回Set对象本身
-    - delete(value)：从set中删除和这个值相等的元素，返回boolean类型
-    - has(value)：判断set中是否存在某个元素，返回boolean类型
-    - clear()：清空set中所有的元素，没有返回值
-    - forEach(callback, [, thisArg])：通过forEach遍历set
-- 另外Set是支持for of的遍历的
+    - `add(value)`：添加某个元素，返回Set对象本身
+    - `delete(value)`：从`set`中删除和这个值相等的元素，返回`boolean`类型
+    - `has(value)`：判断`set`中是否存在某个元素，返回`boolean`类型
+    - `clear()`：清空`set`中所有的元素，没有返回值
+    - `forEach(callback, [, thisArg])`：通过`forEach`遍历`set`
+- 另外Set是支持`for of`的遍历的
+
+- Set 对象作用:
+1. 数组去重(利用扩展运算符)
+```js
+const mySet = new Set([1, 2, 3, 4, 4])
+[...mySet] // [1, 2, 3, 4]
+```
+
+2. 合并两个set对象:
+```js
+let a = new Set([1, 2, 3])
+let b = new Set([4, 3, 2])
+let union = new Set([...a, ...b]) // {1, 2, 3, 4}
+```
+3. 交集
+```js
+let a = new Set([1, 2, 3])
+let b = new Set([2, 3, 6])
+let intersect = new Set([...a].filter(x => b.has(x)))  // {2, 3} 利用数组的filter方法。
+```
+4. 差集
+```js
+let a = new Set([1, 2, 3])
+let b = new Set([4, 3, 2])
+let difference = new Set([...a].filter(x => !b.has(x))) //  {1}
+```
+
+遍历方法
+
+ - `keys()`：返回键名的遍历器。
+ - `values()`：返回键值的遍历器。
+ - `entries()`：返回键值对的遍历器。
+ - `forEach()`：使用回调函数遍历每个成员。
+ 
+由于Set结构没有键名，只有键值（**或者说键名和键值是同一个值**），所以keys方法和values方法的行为完全一致。
+```js
+const set = new Set(['a', 'b', 'c'])
+
+for (let item of set.keys()) {
+  console.log(item)
+}
+// a
+// b
+// c
+
+for (let item of set.values()) {
+  console.log(item)
+}
+// a
+// b
+// c
+
+for (let item of set.entries()) {
+  console.log(item)
+}
+// ["a", "a"]
+// ["b", "b"]
+// ["c", "c"]
+
+// 直接遍历set实例，等同于遍历set实例的values方法
+for (let i of set) {
+  console.log(i)
+}
+// a
+// b
+// c
+
+set.forEach((value, key) => console.log(key + ' : ' + value))
+
+// a: a
+// b: b
+// c: c
+```
+
 
 #### WeakSet使用
 - 和Set的区别
@@ -2668,8 +2753,17 @@ p.running.call({name: "why"})
 ```
 
 #### Map的基本使用
-- 对象存储映射关系只能用字符串（ES6新增了Symbol）作为属性名（key）
+- 对象存储映射关系只能用字符串（ES6新增了`Symbol`）作为属性名（`key`）
 - 某些情况下我们可能希望通过其他类型作为`key`，比如对象，这个时候会自动将对象转成字符串来作为`key`
+
+> `Map`对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。构造函数Map可以接受一个数组作为参数。
+
+- `Map`和`Object`的区别:
+1. 一个`Object` 的键只能是字符串或者 `Symbols`，但一个 `Map` 的键可以是任意值。
+2. `Map`中的键值是有序的（FIFO 原则），而添加到对象中的键则不是。
+3. `Map`的键值对个数可以从 `size` 属性获取，而 `Object` 的键值对个数只能手动计算。
+4. `Object` 都有自己的原型，原型链上的键名有可能和你自己在对象上的设置的键名产生冲突。
+
 - `Map`常见的属性：
     - `size`：返回`Map`中元素的个数
 - Map常见的方法：
@@ -2681,19 +2775,30 @@ p.running.call({name: "why"})
     - `forEach(callback, [, thisArg])`：通过`forEach`遍历`Map`
 - `Map`也可以通过`for of`进行遍历
 
+#### map 和 set 的区别
+1. `Map`是键值对，`Set`是值的集合，当然键和值可以是任何的值；
+
+2. `Map`可以通过`get`方法获取值，而`set`不能因为它只有值；
+
+3. 都能通过迭代器进行`for…of`遍历；
+
+4. `Set`的值是唯一的可以做数组去重，Map由于没有格式限制，可以做数据存储
+
+5. `map`和`set`都是stl中的关联容器，`map`以键值对的形式存储，`key=value`组成pair，是一组映射关系。`set`只有值，可以认为只有一个数据，并且`set`中元素不可以重复且自动排序。
+
 #### WeakMap的使用
 - 和Map的区别
     - 区别一：WeakMap的key只能使用对象，不接受其他的类型作为key
     - 区别二：WeakMap的key对对象想的引用是弱引用，如果没有其他引用引用这个对象，那么GC可以回收该对象
 - WeakMap常见的方法有四个：
     - `set(key, value)`：在Map中添加`key`、`value`，并且返回整个Map对象
-    - `get(key)`：根据key获取Map中的`value`
-    - `has(key)`：判断是否包括某一个key，返回`Boolean`类型
-    - `delete(key)`：根据key删除一个键值对，返回`Boolean`类型
+    - `get(key)`：根据`key`获取Map中的`value`
+    - `has(key)`：判断是否包括某一个`key`，返回`Boolean`类型
+    - `delete(key)`：根据`key`删除一个键值对，返回`Boolean`类型
 
 - WeakMap的应用
     - WeakMap也是不能遍历的
-    - 因为没有forEach方法，也不支持通过for of的方式进行遍历
+    - 因为没有`forEach`方法，也不支持通过`for of`的方式进行遍历
 
 ```js
 // 应用场景(vue3响应式原理)
@@ -4452,7 +4557,7 @@ class HYPromise {
 
 > 迭代器是帮助我们对某个数据结构进行遍历的对象
 
-- 在JavaScript中，迭代器也是一个具体的对象，这个对象需要符合迭代器协（iterator protocol）：
+- 在JavaScript中，迭代器也是一个具体的对象，这个对象需要符合迭代器协议（iterator protocol）：
     - 迭代器协议定义了产生一系列值（无论是有限还是无限个）的标准方式
     - 那么在js中这个标准就是一个特定的`next`方法
 - `next`方法有如下的要求：
@@ -5216,7 +5321,7 @@ npm install
 - `package-lock.json`文件解析：
 - `name`：项目的名称
 - `version`：项目的版本
-- l`ockfileVersion`：lock文件的版本
+- `lockfileVersion`：lock文件的版本
 - `requires`：使用requires来跟踪模块的依赖关系
 - `dependencies`：项目的依赖
     - 当前项目依赖axios，但是axios依赖`follow-redireacts`
