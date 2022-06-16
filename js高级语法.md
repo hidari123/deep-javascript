@@ -2,7 +2,7 @@
  * @Author: hidari
  * @Date: 2022-05-23 10:37:10
  * @LastEditors: hidari 
- * @LastEditTime: 2022-06-16 12:09:16
+ * @LastEditTime: 2022-06-16 12:11:20
  * @FilePath: \deepJavaScript\js高级语法.md
  * @Description: 深入JavaScript
  * 
@@ -1913,7 +1913,7 @@ inheritPrototype(Student, Person)
 #### 原型继承关系
 
 > `function Function(){}` 的 `prototype` 和 `__proto__` 都是 `Function`
-> __proto__ => 因为函数也是对象 指向对象
+> `__proto__` => 因为函数也是对象 指向对象
 > `prototype` => 因为是一个函数 所以有 `prototype` 属性 指向 `Funtion`
 
 ![原型继承关系](/image/05/%E5%8E%9F%E5%9E%8B%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png)
